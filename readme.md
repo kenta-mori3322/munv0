@@ -1,66 +1,96 @@
 # Munchain deployment script
 
+```
 sudo apt update
 sudo apt upgrade -y
 sudo apt install build-essential jq -y
+```
 
 ## Install Golang:
 
 ## Install latest go version https://golang.org/doc/install
-```wget -q -O - https://raw.githubusercontent.com/canha/golang-tools-install-script/master/goinstall.sh | bash -s -- --version 1.18
-source ~/.profile```
+```
+wget -q -O - https://raw.githubusercontent.com/canha/golang-tools-install-script/master/goinstall.sh | bash -s -- --version 1.18
+source ~/.profile
+```
 
 ## to verify that Golang installed
-```go version```
+```
+go version
+```
 // Should return go version go1.18 linux/amd64
 
 ## Install the executables
 
-```sudo rm -rf ~/.mun
+```
+sudo rm -rf ~/.mun
 make install
 
 clear
 
 mkdir -p ~/.mun/upgrade_manager/upgrades
-mkdir -p ~/.mun/upgrade_manager/genesis/bin```
+mkdir -p ~/.mun/upgrade_manager/genesis/bin
+```
 
 ## symlink genesis binary to upgrade
-```cp $(which mund) ~/.mun/upgrade_manager/genesis/bin
-sudo cp $(which mund-manager) /usr/bin ```
+```
+cp $(which mund) ~/.mun/upgrade_manager/genesis/bin
+sudo cp $(which mund-manager) /usr/bin
+```
 
 ## Initialize the validator, where "validator" is a moniker name
-```mund init validator --chain-id test```
+```
+mund init validator --chain-id test
+```
  
 ## Validator
 // mun17zc58s96rxj79jtqqsnzt3wtx3tern6areu43g
-```echo "pet apart myth reflect stuff force attract taste caught fit exact ice slide sheriff state since unusual gaze practice course mesh magnet ozone purchase" | mund keys add validator --keyring-backend test --recover```
+```
+echo "pet apart myth reflect stuff force attract taste caught fit exact ice slide sheriff state since unusual gaze practice course mesh magnet ozone purchase" | mund keys add validator --keyring-backend test --recover
+```
 
 ## Validator1
 // mun14u53eghrurpeyx5cm47vm3qwugtmhcpnstfx9t
-```echo "bottom soccer blue sniff use improve rough use amateur senior transfer quarter" | mund keys add validator1 --keyring-backend test --recover```
+```
+echo "bottom soccer blue sniff use improve rough use amateur senior transfer quarter" | mund keys add validator1 --keyring-backend test --recover
+```
 
 ## Test 1
 // mun1dfjns5lk748pzrd79z4zp9k22mrchm2a5t2f6u
-```echo "betray theory cargo way left cricket doll room donkey wire reunion fall left surprise hamster corn village happy bulb token artist twelve whisper expire" | mund keys add test1 --keyring-backend test --recover```
+```
+echo "betray theory cargo way left cricket doll room donkey wire reunion fall left surprise hamster corn village happy bulb token artist twelve whisper expire" | mund keys add test1 --keyring-backend test --recover
+```
 
 ## Add genesis accounts
-```mund add-genesis-account $(mund keys show validator -a --keyring-backend test) 90000000000000utmun
+```
+mund add-genesis-account $(mund keys show validator -a --keyring-backend test) 90000000000000utmun
 mund add-genesis-account $(mund keys show validator1 -a --keyring-backend test) 30000000000000utmun
-mund add-genesis-account $(mund keys show test1 -a --keyring-backend test) 50000000000000utmun```
+mund add-genesis-account $(mund keys show test1 -a --keyring-backend test) 50000000000000utmun
+```
 
 ## Generate CreateValidator signed transaction
-```mund gentx validator 20000000000000utmun --keyring-backend test --chain-id test```
+```
+mund gentx validator 20000000000000utmun --keyring-backend test --chain-id test
+```
 
 ## Collect genesis transactions
-```mund collect-gentxs```
+```
+mund collect-gentxs
+```
 
 ## replace stake to TMUN
-```sed -i 's/stake/utmun/g' ~/.mun/config/genesis.json```
+```
+sed -i 's/stake/utmun/g' ~/.mun/config/genesis.json
+```
 
 ## Create the service file "/etc/systemd/system/mund.service" with the following content
-```sudo nano /etc/systemd/system/mund.service```
+```
+sudo nano /etc/systemd/system/mund.service
+```
+
 ## paste following content
-```[Unit]
+```
+[Unit]
 Description=mund
 Requires=network-online.target
 After=network-online.target
@@ -83,11 +113,14 @@ KillSignal=SIGTERM
 LimitNOFILE=4096
 
 [Install]
-WantedBy=multi-user.target```
+WantedBy=multi-user.target
+```
 
 
 ## Create log files for mund
-```make log-files
+```
+make log-files
 
 sudo systemctl enable mund
-sudo systemctl start mund```
+sudo systemctl start mund
+```
