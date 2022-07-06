@@ -11,8 +11,8 @@ const (
 	DefaultJunoCompileCost uint64 = 100
 )
 
-// JunoGasRegisterConfig is defaults plus a custom compile amount
-func JunoGasRegisterConfig() wasmkeeper.WasmGasRegisterConfig {
+// MunGasRegisterConfig is defaults plus a custom compile amount
+func MunGasRegisterConfig() wasmkeeper.WasmGasRegisterConfig {
 	gasConfig := wasmkeeper.DefaultGasRegisterConfig()
 	gasConfig.InstanceCost = DefaultJunoInstanceCost
 	gasConfig.CompileCost = DefaultJunoCompileCost
@@ -21,5 +21,5 @@ func JunoGasRegisterConfig() wasmkeeper.WasmGasRegisterConfig {
 }
 
 func NewJunoWasmGasRegister() wasmkeeper.WasmGasRegister {
-	return wasmkeeper.NewWasmGasRegister(JunoGasRegisterConfig())
+	return wasmkeeper.NewWasmGasRegister(MunGasRegisterConfig())
 }

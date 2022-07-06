@@ -1,4 +1,4 @@
-import starportLibrary from '@starport/vue'
+import starportLibrary from './starportvue'
 import { createApp } from 'vue'
 
 import App from './App.vue'

@@ -1,4 +1,4 @@
-import { blocks, env, wallet } from '@starport/vuex'
+import { blocks, env, wallet } from '../starportvux'
 
 import generated from './generated'
 export default function init(store) {

@@ -13,7 +13,7 @@
 </template>
 
 <script>
-import { SpAssets, SpTokenTransfer, SpTokenTransferList } from '@starport/vue'
+import { SpAssets, SpTokenTransfer, SpTokenTransferList } from '../starportvue'
 import { computed } from 'vue'
 import { useStore } from 'vuex'
 
