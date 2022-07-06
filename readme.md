@@ -1,52 +1,126 @@
-# mun
-**mun** is a blockchain built using Cosmos SDK and Tendermint and created with [Ignite CLI](https://ignite.com/cli).
-
-## Get started
+# Munchain deployment script
 
 ```
-ignite chain serve
+sudo apt update
+sudo apt upgrade -y
+sudo apt install build-essential jq -y
 ```
 
-`serve` command installs dependencies, builds, initializes, and starts your blockchain in development.
+## Install Golang:
 
-### Configure
-
-Your blockchain in development can be configured with `config.yml`. To learn more, see the [Ignite CLI docs](https://docs.ignite.com).
-
-### Web Frontend
-
-Ignite CLI has scaffolded a Vue.js-based web app in the `vue` directory. Run the following commands to install dependencies and start the app:
-
+## Install latest go version https://golang.org/doc/install
 ```
-cd vue
-npm install
-npm run serve
+wget -q -O - https://raw.githubusercontent.com/canha/golang-tools-install-script/master/goinstall.sh | bash -s -- --version 1.18
+source ~/.profile
 ```
 
-The frontend app is built using the `@starport/vue` and `@starport/vuex` packages. For details, see the [monorepo for Ignite front-end development](https://github.com/ignite/web).
+## to verify that Golang installed
+```
+go version
+```
+// Should return go version go1.18 linux/amd64
 
-## Release
-To release a new version of your blockchain, create and push a new tag with `v` prefix. A new draft release with the configured targets will be created.
+## Install the executables
 
 ```
-git tag v0.1
-git push origin v0.1
+sudo rm -rf ~/.mun
+make install
+
+clear
+
+mkdir -p ~/.mun/upgrade_manager/upgrades
+mkdir -p ~/.mun/upgrade_manager/genesis/bin
 ```
 
-After a draft release is created, make your final changes from the release page and publish it.
-
-### Install
-To install the latest version of your blockchain node's binary, execute the following command on your machine:
-
+## symlink genesis binary to upgrade
 ```
-curl https://get.ignite.com/username/mun@latest! | sudo bash
+cp $(which mund) ~/.mun/upgrade_manager/genesis/bin
+sudo cp $(which mund-manager) /usr/bin
 ```
-`username/mun` should match the `username` and `repo_name` of the Github repository to which the source code was pushed. Learn more about [the install process](https://github.com/allinbits/starport-installer).
 
-## Learn more
+## Initialize the validator, where "validator" is a moniker name
+```
+mund init validator --chain-id test
+```
+ 
+## Validator
+// mun17zc58s96rxj79jtqqsnzt3wtx3tern6areu43g
+```
+echo "pet apart myth reflect stuff force attract taste caught fit exact ice slide sheriff state since unusual gaze practice course mesh magnet ozone purchase" | mund keys add validator --keyring-backend test --recover
+```
 
-- [Ignite CLI](https://ignite.com/cli)
-- [Tutorials](https://docs.ignite.com/guide)
-- [Ignite CLI docs](https://docs.ignite.com)
-- [Cosmos SDK docs](https://docs.cosmos.network)
-- [Developer Chat](https://discord.gg/ignite)
+## Validator1
+// mun14u53eghrurpeyx5cm47vm3qwugtmhcpnstfx9t
+```
+echo "bottom soccer blue sniff use improve rough use amateur senior transfer quarter" | mund keys add validator1 --keyring-backend test --recover
+```
+
+## Test 1
+// mun1dfjns5lk748pzrd79z4zp9k22mrchm2a5t2f6u
+```
+echo "betray theory cargo way left cricket doll room donkey wire reunion fall left surprise hamster corn village happy bulb token artist twelve whisper expire" | mund keys add test1 --keyring-backend test --recover
+```
+
+## Add genesis accounts
+```
+mund add-genesis-account $(mund keys show validator -a --keyring-backend test) 90000000000000utmun
+mund add-genesis-account $(mund keys show validator1 -a --keyring-backend test) 30000000000000utmun
+mund add-genesis-account $(mund keys show test1 -a --keyring-backend test) 50000000000000utmun
+```
+
+## Generate CreateValidator signed transaction
+```
+mund gentx validator 20000000000000utmun --keyring-backend test --chain-id test
+```
+
+## Collect genesis transactions
+```
+mund collect-gentxs
+```
+
+## replace stake to TMUN
+```
+sed -i 's/stake/utmun/g' ~/.mun/config/genesis.json
+```
+
+## Create the service file "/etc/systemd/system/mund.service" with the following content
+```
+sudo nano /etc/systemd/system/mund.service
+```
+
+## paste following content
+```
+[Unit]
+Description=mund
+Requires=network-online.target
+After=network-online.target
+
+[Service]
+Restart=on-failure
+RestartSec=3
+User=root
+Group=root
+Environment=DAEMON_NAME=mund
+Environment=DAEMON_HOME=/root/.mun
+Environment=DAEMON_ALLOW_DOWNLOAD_BINARIES=on
+Environment=DAEMON_RESTART_AFTER_UPGRADE=on
+PermissionsStartOnly=true
+ExecStart=/usr/bin/mund-manager start --pruning="nothing" --rpc.laddr "tcp://0.0.0.0:26657"
+StandardOutput=file:/var/log/mund/mund.log
+StandardError=file:/var/log/mund/mund_error.log
+ExecReload=/bin/kill -HUP $MAINPID
+KillSignal=SIGTERM
+LimitNOFILE=4096
+
+[Install]
+WantedBy=multi-user.target
+```
+
+
+## Create log files for mund
+```
+make log-files
+
+sudo systemctl enable mund
+sudo systemctl start mund
+```
