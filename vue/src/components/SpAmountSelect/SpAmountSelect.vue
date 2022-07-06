@@ -198,7 +198,7 @@ export default defineComponent({
     let findAsset = (x: AssetForUI, y: AssetForUI): boolean =>
       y.path === x.path && x.amount.denom === y.amount.denom
     let parseAmount = (amount: string): number => {
-      return amount == '' ? 0 : parseInt(amount)
+      return amount == '' ? 0 : +amount
     }
     let handleAmountInput = (amount: string, x: AssetForUI) => {
       let amountAsBigNumber = new BigNumber(amount)

@@ -103,7 +103,7 @@
             </ul>
           </td>
           <td class="assets-table__amount">
-            {{ new Intl.NumberFormat('en-GB').format(balance.amount.amount) }}
+            {{ balance.amount.amount }}
           </td>
         </tr>
         <tr v-if="noSearchResults" class="assets-table__row">

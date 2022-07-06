@@ -100,14 +100,10 @@ export default async function ({
       normalized.amount = { amount: decoded.amount, denom: decoded.denom }
       normalized.height = Number(tx.height)
     } else if (isBankTransfer) {
-      console.log("tx.body.messages[0]")
-      console.log(tx.body.messages[0])
       normalized.sender = tx.body.messages[0].from_address
       normalized.receiver = tx.body.messages[0].to_address
       normalized.amount = tx.body.messages[0].amount
       normalized.height = Number(tx.height)
-      console.log("normalized.amount")
-      console.log(normalized.amount)
       
       if (normalized.amount[0].denom.charAt(0) == 'u') {
         normalized.amount[0].denom = normalized.amount[0].denom.slice(1)

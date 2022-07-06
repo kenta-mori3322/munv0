@@ -28,6 +28,8 @@ const baseMsgSend: object = { from_address: "", to_address: "" };
 
 export const MsgSend = {
   encode(message: MsgSend, writer: Writer = Writer.create()): Writer {
+    console.log("encode YYYYYY")
+
     if (message.from_address !== "") {
       writer.uint32(10).string(message.from_address);
     }
@@ -41,6 +43,8 @@ export const MsgSend = {
   },
 
   decode(input: Reader | Uint8Array, length?: number): MsgSend {
+    console.log("YYYYYY")
+
     const reader = input instanceof Uint8Array ? new Reader(input) : input;
     let end = length === undefined ? reader.len : reader.pos + length;
     const message = { ...baseMsgSend } as MsgSend;
@@ -300,6 +304,8 @@ export class MsgClientImpl implements Msg {
   }
   Send(request: MsgSend): Promise<MsgSendResponse> {
     const data = MsgSend.encode(request).finish();
+    console.log("!!!!data!!!!")
+    console.log(data)
     const promise = this.rpc.request("cosmos.bank.v1beta1.Msg", "Send", data);
     return promise.then((data) => MsgSendResponse.decode(new Reader(data)));
   }
