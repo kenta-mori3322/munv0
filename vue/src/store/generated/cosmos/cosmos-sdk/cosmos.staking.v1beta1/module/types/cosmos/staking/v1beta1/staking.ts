@@ -2601,7 +2601,7 @@ function longToNumber(long: Long): number {
   return long.toNumber();
 }
 
-if (util.Long !== Long) {
+if (false) {
   util.Long = Long as any;
   configure();
 }
