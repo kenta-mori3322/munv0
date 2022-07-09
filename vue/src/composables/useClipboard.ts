@@ -7,16 +7,17 @@ type ClipboardOptions = {
 export default function (options?: ClipboardOptions) {
   const isSupported = Boolean(navigator && 'clipboard' in navigator)
   const hasCopied = ref(false)
-
   async function copy(value: string | ComputedRef<string>) {
+    
     if (isSupported) {
       await navigator.clipboard.writeText(unref(value))
       hasCopied.value = true
+      console.log("copied!")
 
       setTimeout(() => (hasCopied.value = false), options?.resetAfter || 1000)
     }
   }
-
+  
   return {
     isSupported,
     copy,
