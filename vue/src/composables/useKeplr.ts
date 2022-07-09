@@ -88,7 +88,7 @@ export default function ({ $s }: Params): Response {
       let coinType = 118
 
       let gasPriceStep = {
-        low: 0.01,
+        low: 0.0,
         average: 0.025,
         high: 0.04
       }
