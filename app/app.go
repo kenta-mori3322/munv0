@@ -103,6 +103,9 @@ import (
 	monitoringp "github.com/tendermint/spn/x/monitoringp"
 	monitoringpkeeper "github.com/tendermint/spn/x/monitoringp/keeper"
 	monitoringptypes "github.com/tendermint/spn/x/monitoringp/types"
+	munmodule "mun/x/mun"
+	munmodulekeeper "mun/x/mun/keeper"
+	munmoduletypes "mun/x/mun/types"
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 )
 
@@ -196,6 +199,7 @@ var (
 		vesting.AppModuleBasic{},
 		monitoringp.AppModuleBasic{},
 		wasm.AppModuleBasic{},
+		munmodule.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 	)
 
@@ -209,6 +213,7 @@ var (
 		govtypes.ModuleName:            {authtypes.Burner},
 		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
 		wasm.ModuleName:                {authtypes.Burner},
+		munmoduletypes.ModuleName:      {authtypes.Minter, authtypes.Burner, authtypes.Staking},
 		// this line is used by starport scaffolding # stargate/app/maccPerms
 	}
 )
@@ -271,6 +276,7 @@ type App struct {
 	ScopedTransferKeeper   capabilitykeeper.ScopedKeeper
 	ScopedMonitoringKeeper capabilitykeeper.ScopedKeeper
 
+	MunKeeper munmodulekeeper.Keeper
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	wasmKeeper       wasm.Keeper
@@ -311,6 +317,7 @@ func New(
 		govtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, upgradetypes.StoreKey, feegrant.StoreKey,
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey, monitoringptypes.StoreKey,
 		wasm.StoreKey,
+		munmoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -413,6 +420,16 @@ func New(
 	)
 	// If evidence needs to be handled for the app, set routes in router here and seal
 	app.EvidenceKeeper = *evidenceKeeper
+
+	app.MunKeeper = *munmodulekeeper.NewKeeper(
+		appCodec,
+		keys[munmoduletypes.StoreKey],
+		keys[munmoduletypes.MemStoreKey],
+		app.GetSubspace(munmoduletypes.ModuleName),
+
+		app.BankKeeper,
+	)
+	munModule := munmodule.NewAppModule(appCodec, app.MunKeeper, app.AccountKeeper, app.BankKeeper)
 
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 	wasmDir := filepath.Join(homePath, "data")
@@ -517,6 +534,7 @@ func New(
 		transferModule,
 		monitoringModule,
 		wasm.NewAppModule(appCodec, &app.wasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
+		munModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 
@@ -545,6 +563,7 @@ func New(
 		paramstypes.ModuleName,
 		monitoringptypes.ModuleName,
 		wasm.ModuleName,
+		munmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/beginBlockers
 	)
 
@@ -568,6 +587,7 @@ func New(
 		ibchost.ModuleName,
 		ibctransfertypes.ModuleName,
 		monitoringptypes.ModuleName,
+		munmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/endBlockers
 		wasm.ModuleName,
 	)
@@ -597,6 +617,7 @@ func New(
 		ibctransfertypes.ModuleName,
 		feegrant.ModuleName,
 		monitoringptypes.ModuleName,
+		munmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 		wasm.ModuleName,
 	)
@@ -622,6 +643,7 @@ func New(
 		ibc.NewAppModule(app.IBCKeeper),
 		transferModule,
 		monitoringModule,
+		munModule,
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 	app.sm.RegisterStoreDecoders()
@@ -818,6 +840,7 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(ibctransfertypes.ModuleName)
 	paramsKeeper.Subspace(ibchost.ModuleName)
 	paramsKeeper.Subspace(monitoringptypes.ModuleName)
+	paramsKeeper.Subspace(munmoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 	paramsKeeper.Subspace(wasm.ModuleName)
 
