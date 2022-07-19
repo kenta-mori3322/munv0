@@ -73,7 +73,7 @@ func (min MinCommissionDecorator) AnteHandle(
 
 			err = validMsg(innerMsg)
 			if err != nil {
-				return err
+				return sdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "invalid inner MSG!!!")
 			}
 		}
 
@@ -83,7 +83,8 @@ func (min MinCommissionDecorator) AnteHandle(
 	for _, m := range msgs {
 		if msg, ok := m.(*authz.MsgExec); ok {
 			if err := validAuthz(msg); err != nil {
-				return ctx, err
+				// return ctx, err
+				return ctx, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "invalid Authz MSG!!!")
 			}
 			continue
 		}
@@ -91,7 +92,7 @@ func (min MinCommissionDecorator) AnteHandle(
 		// validate normal msgs
 		err = validMsg(m)
 		if err != nil {
-			return ctx, err
+			return ctx, sdkerrors.Wrapf(sdkerrors.ErrUnauthorized, "invalid normal MSG!!!")
 		}
 	}
 
