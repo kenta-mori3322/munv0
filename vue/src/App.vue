@@ -28,8 +28,8 @@ export default {
 
     // state
     let navbarLinks = [
-      { name: 'Portfolio', url: '/portfolio' },
-      { name: 'Data', url: '/data' }
+      { name: 'CoinData', url: '/coin' },
+      { name: 'TokenData', url: '/token' }
     ]
 
     // computed
@@ -39,7 +39,7 @@ export default {
     onBeforeMount(async () => {
       await $s.dispatch('common/env/init')
 
-      router.push('portfolio')
+      router.push('coin')
     })
 
     return {
