@@ -225,3 +225,5 @@ make log-files
 sudo systemctl enable mund
 sudo systemctl start mund
 ```
+## After buying TMUN, he can become a validator by staking it.
+mund tx staking create-validator --from validator3 --moniker validator3 --pubkey $(mund tendermint show-validator) --chain-id test --keyring-backend test --amount 2000000000000000utmun --commission-max-change-rate 0.01 --commission-max-rate 0.2 --commission-rate 0.1 --min-self-delegation 1 --fees 20000utmun -y
