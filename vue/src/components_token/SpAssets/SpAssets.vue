@@ -66,7 +66,7 @@
     <table class="assets-table">
       <thead v-if="balances.assets.length" class="assets-table__thead">
         <tr>
-          <td>Asset</td>
+          <td>Asset123</td>
           <td></td>
           <td class="assets-table__align-right">Available balance</td>
         </tr>
@@ -162,7 +162,7 @@
 import { computed, defineComponent, nextTick, ref, toRefs } from 'vue'
 import { useStore } from 'vuex'
 
-import { useAddress, useAssets } from '../../composables'
+import { useAddress, useAssets } from '../../composables_token'
 import SpDenom from '../SpDenom'
 
 export default defineComponent({

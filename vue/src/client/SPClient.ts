@@ -1,5 +1,6 @@
 import { OfflineDirectSigner, Registry } from '@cosmjs/proto-signing'
 import { SigningStargateClient } from '@cosmjs/stargate'
+import { SigningCosmWasmClient, CosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 import axios, { AxiosPromise, AxiosResponse } from 'axios'
 import { EventEmitter } from 'events'
 import ReconnectingWebSocket from 'reconnecting-websocket'
@@ -39,29 +40,33 @@ export default class SPClient extends EventEmitter {
   private socket: ReconnectingWebSocket
 
   public signingClient
+  public cosmwasmSigningClient
+
   private signer: OfflineDirectSigner
   private timer: ReturnType<typeof setInterval>
 
   constructor({ apiAddr, rpcAddr, wsAddr, refresh, offline }: IClientConfig) {
     super()
     this.apiAddr = apiAddr
-    this.rpcAddr = rpcAddr
-    this.wsAddr = wsAddr
-    this.offline = offline
-    this.refresh = refresh
+    this.rpcAddr = rpcAddr as string
+    this.wsAddr = wsAddr as string
+    this.offline = offline as boolean
+    this.refresh = refresh as number
     const poll: () => Promise<void> = this.connectivityTest.bind(this)
     this.timer = setInterval(poll, this.refresh)
     this.connectivityTest()
 
-    if (this.wsAddr) {
-      this.connectWS()
-    }
+    // if (this.wsAddr) {
+    //   this.connectWS()
+    // }
   }
   public async useSigner(signer: OfflineDirectSigner): Promise<void> {
     this.signingClient = await SigningStargateClient.connectWithSigner(
       this.rpcAddr,
       signer
     )
+    this.cosmwasmSigningClient = await SigningCosmWasmClient.connectWithSigner(this.rpcAddr, signer);
+
     this.signer = signer
   }
   public switchAPI(apiAddr: string): void {
@@ -71,7 +76,7 @@ export default class SPClient extends EventEmitter {
     this.emit('ws-status', false)
     this.wsAddr = wsAddr
     this.socket.close()
-    this.connectWS()
+    // this.connectWS()
   }
 
   public connectWS() {
@@ -92,6 +97,8 @@ export default class SPClient extends EventEmitter {
         this.signer,
         { registry }
       )
+
+      this.cosmwasmSigningClient = await SigningCosmWasmClient.connectWithSigner(this.rpcAddr, this.signer);
     }
   }
   private async connectivityTest(): Promise<void> {
@@ -200,7 +207,7 @@ export default class SPClient extends EventEmitter {
     path,
     query,
     method
-  }: IFullRequestParams): Promise<AxiosResponse<T>> {
+  }: IFullRequestParams): Promise<AxiosResponse<T>|undefined> {
     const url: string = this.apiAddr + path + this.addQueryParams(query)
     try {
       const response: AxiosPromise<T> = axios({
