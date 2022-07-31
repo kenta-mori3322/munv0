@@ -413,12 +413,12 @@ export default defineComponent({
 
       let fee: Array<Amount> = state.tx.fees.map((x: AssetForUI) => ({
         denom: 'u'+x.amount.denom,
-        amount: x.amount.amount == '' ? '0' : "" + x.amount.amount*1e9
+        amount: x.amount.amount == '' ? '0' : "" + x.amount.amount*1e6
       }))
 
       let amount: Array<Amount> = state.tx.amount.map((x: AssetForUI) => ({
         denom: 'u'+x.amount.denom,
-        amount: x.amount.amount == '' ? '0' : "" + (+x.amount.amount)*1e9
+        amount: x.amount.amount == '' ? '0' : "" + (+x.amount.amount)*1e6
       }))
 
       let memo = state.tx.memo

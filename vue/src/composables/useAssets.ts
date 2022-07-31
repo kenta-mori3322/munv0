@@ -92,7 +92,7 @@ export default function ({ $s, opts }: Params): Response {
       }
     }
 
-    normalized.amount.amount = "" + (+balance.amount/1e9)
+    normalized.amount.amount = "" + (+balance.amount/1e6)
 
     return normalized
   }

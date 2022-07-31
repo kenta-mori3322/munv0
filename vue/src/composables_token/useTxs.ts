@@ -107,7 +107,7 @@ export default async function ({
       
       if (normalized.amount[0].denom.charAt(0) == 'u') {
         normalized.amount[0].denom = normalized.amount[0].denom.slice(1)
-        normalized.amount[0].amount = +normalized.amount[0].amount/1e9
+        normalized.amount[0].amount = +normalized.amount[0].amount/1e6
       }
     }
 
