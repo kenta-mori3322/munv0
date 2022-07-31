@@ -231,7 +231,7 @@ func init() {
 		panic(err)
 	}
 
-	DefaultNodeHome = filepath.Join(userHomeDir, ".testmun")
+	DefaultNodeHome = filepath.Join(userHomeDir, "."+Name)
 
 	RegisterCoinDenominations()
 }
