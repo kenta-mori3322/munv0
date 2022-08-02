@@ -302,10 +302,10 @@ import long from 'long'
 import { computed, defineComponent, PropType, reactive, watch } from 'vue'
 import { useStore } from 'vuex'
 
-import { AssetForUI } from '../composables_token/useAssets'
-import { Amount } from '../utils/interfaces'
+import { AssetForUI } from '../../composables_token/useAssets'
+import { Amount } from '../../utils/interfaces'
 
-import { useAddress, useAssets } from '../../composables'
+import { useAddress, useAssets } from '../../composables_token'
 import SpAmountSelect from '../SpAmountSelect'
 import SpButton from '../SpButton'
 import SpCard from '../SpCard'
@@ -380,6 +380,9 @@ export default defineComponent({
     let { address } = useAddress({ $s })
     let { balances } = useAssets({ $s })
 
+console.log("!!!!balances!!!")
+console.log(balances)
+
     // actions
     let sendMsgSend = (opts: any) =>
       $s.dispatch('cosmos.bank.v1beta1/sendMsgSend', opts)
@@ -397,7 +400,7 @@ export default defineComponent({
       }
     }
     let parseAmount = (amount: string): number => {
-      return amount == '' ? 0 : parseInt(amount)
+      return amount == '' ? 0 : +amount
     }
     let resetTx = (): void => {
       state.tx.amount = []
@@ -413,7 +416,7 @@ export default defineComponent({
 
       let fee: Array<Amount> = state.tx.fees.map((x: AssetForUI) => ({
         denom: 'u'+x.amount.denom,
-        amount: x.amount.amount == '' ? '0' : "" + x.amount.amount*1e6
+        amount: x.amount.amount == '' ? '0' : "" + (+x.amount.amount)*1e6
       }))
 
       let amount: Array<Amount> = state.tx.amount.map((x: AssetForUI) => ({
