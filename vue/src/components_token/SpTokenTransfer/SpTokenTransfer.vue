@@ -380,12 +380,9 @@ export default defineComponent({
     let { address } = useAddress({ $s })
     let { balances } = useAssets({ $s })
 
-console.log("!!!!balances!!!")
-console.log(balances)
-
     // actions
     let sendMsgSend = (opts: any) =>
-      $s.dispatch('cosmos.bank.v1beta1/sendMsgSend', opts)
+      $s.dispatch('cosmos.bank.v1beta1/sendMsgTokenSend', opts)
 
     let sendMsgTransfer = (opts: any) =>
       $s.dispatch('ibc.applications.transfer.v1/sendMsgTransfer', opts)
@@ -415,12 +412,12 @@ console.log(balances)
       state.currentUIState = UI_STATE.TX_SIGNING
 
       let fee: Array<Amount> = state.tx.fees.map((x: AssetForUI) => ({
-        denom: 'u'+x.amount.denom,
+        denom: x.amount.denom,
         amount: x.amount.amount == '' ? '0' : "" + (+x.amount.amount)*1e6
       }))
 
       let amount: Array<Amount> = state.tx.amount.map((x: AssetForUI) => ({
-        denom: 'u'+x.amount.denom,
+        denom: x.amount.denom,
         amount: x.amount.amount == '' ? '0' : "" + (+x.amount.amount)*1e6
       }))
 
