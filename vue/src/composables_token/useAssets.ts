@@ -8,16 +8,15 @@ import {
   watch
 } from 'vue'
 import { Store } from 'vuex'
-import { EventEmitter } from 'events'
-import { SigningCosmWasmClient, CosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 
 import { Amount, DenomTrace } from '../utils/interfaces'
+
 import { useAddress, useDenom } from '.'
 
 type Response = {
   balances: Ref<{ isLoading: boolean; assets: AssetForUI[] }>
   balancesRaw: ComputedRef<any[]>
-  normalize: (balance: object) => Promise<boolean>
+  normalize: (balance: object) => Promise<AssetForUI>
 }
 export type AssetForUI = {
   amount: Amount
@@ -41,25 +40,10 @@ export default function ({ $s, opts }: Params): Response {
   // composables
   let { address } = useAddress({ $s })
   let { getDenomTrace } = useDenom({ $s })
-  // computed
-  let spClient = computed<EventEmitter>(() => $s.getters['common/env/client'])
-  let cosmwasmSigningClient = computed<SigningCosmWasmClient>(
-    () => (spClient.value as any)?.cosmwasmSigningClient as SigningCosmWasmClient
-  )
 
   // actions
-  let queryAllBalances = (opts: any) => {
-    if (!cosmwasmSigningClient.value) 
-      return new Promise<any>([] as any)
-
-    return cosmwasmSigningClient.value.queryContractSmart("mun1zwv6feuzhy6a9wekh96cd57lsarmqlwxdypdsplw6zhfncqw6ftqzwk9ar",
-    {
-        balance:{
-            address:"mun1dfjns5lk748pzrd79z4zp9k22mrchm2a7ym0yh"
-        }
-    })
-  }
-    // $s.dispatch('cosmos.bank.v1beta1/QueryAllBalances', opts)
+  let queryAllBalances = (opts: any) =>
+    $s.dispatch('cosmos.bank.v1beta1/QueryAllTokenBalances', opts)
 
   // lh
   onBeforeMount(async () => {
@@ -75,43 +59,42 @@ export default function ({ $s, opts }: Params): Response {
 
   // computed
   let balancesRaw = computed<any[]>(() => {
-    // return (
-    //   $s.getters['cosmos.bank.v1beta1/getAllBalances']({
-    //     params: { address: address.value }
-    //   })?.balances ?? []
-    // )
-    if (!cosmwasmSigningClient.value) 
-      return []
-
-    const balance = cosmwasmSigningClient.value.queryContractSmart("mun1zwv6feuzhy6a9wekh96cd57lsarmqlwxdypdsplw6zhfncqw6ftqzwk9ar",
-    {
-        balance:{
-            address:"mun1dfjns5lk748pzrd79z4zp9k22mrchm2a7ym0yh"
-        }
-    })
-
-    return [balance]
+    return (
+      $s.getters['cosmos.bank.v1beta1/getAllTokenBalances']({
+        params: { address: address.value }
+      })?.balances ?? []
+    )
   })
 
   // methods
-  let normalize = async (balance: any): Promise<boolean> => {
-    balance.then((b) => {
-      console.log('balance ready')
-      console.log(b)
-      let normalized: AssetForUI = {
-        amount: {
-          amount: '',
-          denom: ''
-        }
+  let normalize = async (balance: any): Promise<AssetForUI> => {
+    let isIBC = balance.denom.indexOf('ibc/') == 0
+
+    let normalized: AssetForUI = {
+      amount: {
+        amount: '',
+        denom: ''
       }
-     
-      normalized.amount.amount = "" + (+b.balance/1e6)
-      normalized.amount.denom = "DGM"
-  
-      balances.value.assets = [normalized] as any
-    })
-    
-    return true
+    }
+
+    if (isIBC) {
+      let denomTrace: DenomTrace = await getDenomTrace(balance.denom)
+
+      normalized.path = opts?.extractChannels
+        ? denomTrace.denom_trace.path.match(/\d+/g)?.reverse()
+        : denomTrace.denom_trace.path
+      normalized.amount.denom = denomTrace.denom_trace.base_denom
+    } else {
+      if (balance.denom.charAt(0) == 'u') {
+        normalized.amount.denom = balance.denom.slice(1)
+      } else {
+        normalized.amount.denom = balance.denom
+      }
+    }
+
+    normalized.amount.amount = "" + (+balance.amount/1e6)
+
+    return normalized
   }
 
   //watch
@@ -127,10 +110,10 @@ export default function ({ $s, opts }: Params): Response {
         })
       }
 
-      console.log('here')
-      let arr: Promise<boolean>[] = balancesRaw.value.map(normalize)
+      let arr: Promise<AssetForUI>[] = balancesRaw.value.map(normalize)
 
-      Promise.all(arr).then((b) => {
+      Promise.all(arr).then((normalized) => {
+        balances.value.assets = normalized as any
       })
     }
   )

@@ -1,4 +1,4 @@
-import { txClient, queryClient, MissingWalletError , registry} from './module'
+import { txClient, wasmClient, queryClient, MissingWalletError , registry} from './module'
 
 import { SendAuthorization } from "./module/types/cosmos/bank/v1beta1/authz"
 import { Params } from "./module/types/cosmos/bank/v1beta1/bank"
@@ -19,6 +19,11 @@ async function initTxClient(vuexGetters) {
 	})
 }
 
+async function initCosmClient(vuexGetters) {
+	return await wasmClient(vuexGetters['common/wallet/signer'], {
+		addr: vuexGetters['common/env/apiTendermint']
+	})
+}
 async function initQueryClient(vuexGetters) {
 	return await queryClient({
 		addr: vuexGetters['common/env/apiCosmos']
@@ -51,6 +56,7 @@ const getDefaultState = () => {
 	return {
 				Balance: {},
 				AllBalances: {},
+				AllTokenBalances: {},
 				TotalSupply: {},
 				SupplyOf: {},
 				Params: {},
@@ -106,6 +112,12 @@ export default {
 						(<any> params).query=null
 					}
 			return state.AllBalances[JSON.stringify(params)] ?? {}
+		},
+				getAllTokenBalances: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.AllTokenBalances[JSON.stringify(params)] ?? {}
 		},
 				getTotalSupply: (state) => (params = { params: {}}) => {
 					if (!(<any> params).query) {
@@ -222,7 +234,28 @@ export default {
 			}
 		},
 		
-		
+		async QueryAllTokenBalances({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const wasmClient=await initCosmClient(rootGetters)
+				let balance = await wasmClient.queryContractSmart("mun1suhgf5svhu4usrurvxzlgn54ksxmn8gljarjtxqnapv8kjnp4nrsfttf7h",
+				{
+					balance:{
+						address:"mun1dfjns5lk748pzrd79z4zp9k22mrchm2a7ym0yh"
+					}
+				})
+				
+				let value = [{denom: 'DGM', amount: balance.balance}]
+
+				commit('QUERY', { query: 'AllTokenBalances', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryAllTokenBalances', payload: { options: { all }, params: {...key},query }})
+				return getters['getAllTokenBalances']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				console.log(e)
+				throw new Error('QueryClient:QueryAllTokenBalances API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
 		
 		
 		 		
