@@ -302,7 +302,7 @@ import long from 'long'
 import { computed, defineComponent, PropType, reactive, watch } from 'vue'
 import { useStore } from 'vuex'
 
-import { AssetForUI } from '../composables/useAssets'
+import { AssetForUI } from '../composables_token/useAssets'
 import { Amount } from '../utils/interfaces'
 
 import { useAddress, useAssets } from '../../composables'
