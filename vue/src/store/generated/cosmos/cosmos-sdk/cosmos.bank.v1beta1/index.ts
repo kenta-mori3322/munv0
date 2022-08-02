@@ -245,7 +245,8 @@ export default {
 					}
 				})
 				
-				let value = [{denom: 'DGM', amount: balance.balance}]
+				let balances = [{denom: 'DGM', amount: balance.balance}]
+				let value = { balances:balances, pagination:{next_key: null, total: '1'}}
 
 				commit('QUERY', { query: 'AllTokenBalances', key: { params: {...key}, query}, value })
 				if (subscribe) commit('SUBSCRIBE', { action: 'QueryAllTokenBalances', payload: { options: { all }, params: {...key},query }})
