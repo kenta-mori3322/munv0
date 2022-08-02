@@ -241,7 +241,7 @@ export default {
 				let balance = await wasmClient.queryContractSmart("mun1suhgf5svhu4usrurvxzlgn54ksxmn8gljarjtxqnapv8kjnp4nrsfttf7h",
 				{
 					balance:{
-						address:"mun1dfjns5lk748pzrd79z4zp9k22mrchm2a7ym0yh"
+						address: key.address
 					}
 				})
 				

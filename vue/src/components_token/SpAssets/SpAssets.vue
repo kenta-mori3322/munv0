@@ -66,7 +66,7 @@
     <table class="assets-table">
       <thead v-if="balances.assets.length" class="assets-table__thead">
         <tr>
-          <td>Asset123</td>
+          <td>Asset</td>
           <td></td>
           <td class="assets-table__align-right">Available balance</td>
         </tr>
