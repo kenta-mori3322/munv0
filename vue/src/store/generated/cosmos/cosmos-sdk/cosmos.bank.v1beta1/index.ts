@@ -9,7 +9,7 @@ import { Supply } from "./module/types/cosmos/bank/v1beta1/bank"
 import { DenomUnit } from "./module/types/cosmos/bank/v1beta1/bank"
 import { Metadata } from "./module/types/cosmos/bank/v1beta1/bank"
 import { Balance } from "./module/types/cosmos/bank/v1beta1/genesis"
-
+import { calculateFee, GasPrice, isMsgSubmitProposalEncodeObject } from "@cosmjs/stargate"
 
 export { SendAuthorization, Params, SendEnabled, Input, Output, Supply, DenomUnit, Metadata, Balance };
 
@@ -237,7 +237,7 @@ export default {
 		async QueryAllTokenBalances({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
 			try {
 				const key = params ?? {};
-				const wasmClient=await initCosmClient(rootGetters)
+				const wasmClient = await initCosmClient(rootGetters)
 				let balance = await wasmClient.queryContractSmart("mun1suhgf5svhu4usrurvxzlgn54ksxmn8gljarjtxqnapv8kjnp4nrsfttf7h",
 				{
 					balance:{
@@ -394,8 +394,6 @@ export default {
 			try {
 				const txClient=await initTxClient(rootGetters)
 				const msg = await txClient.msgSend(value)
-			console.log("msg")
-			console.log(msg)
 
 				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
 	gas: "200000" }, memo})
@@ -408,7 +406,38 @@ export default {
 				}
 			}
 		},
-		
+		async sendMsgTokenSend({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const wasmClient = await initCosmClient(rootGetters)
+				const gasPrice = GasPrice.fromString("0.05utmun");
+				const executeFee = calculateFee(300_000, gasPrice);
+
+				const msgSend =
+				{
+					transfer: {
+						recipient: value.to_address,
+						amount: value.amount[0].amount
+					}
+			
+				}
+			
+				const result = await wasmClient.execute(
+					value.from_address,
+					"mun1suhgf5svhu4usrurvxzlgn54ksxmn8gljarjtxqnapv8kjnp4nrsfttf7h",
+					msgSend,
+					executeFee,
+					"",
+				);
+
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgTokenSend:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgTokenSend:Token Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
 		async MsgMultiSend({ rootGetters }, { value }) {
 			try {
 				const txClient=await initTxClient(rootGetters)
