@@ -107,9 +107,7 @@ import (
 	monitoringp "github.com/tendermint/spn/x/monitoringp"
 	monitoringpkeeper "github.com/tendermint/spn/x/monitoringp/keeper"
 	monitoringptypes "github.com/tendermint/spn/x/monitoringp/types"
-	claimmodule "mun/x/claim"
-	claimkeeper "mun/x/claim/keeper"
-	claimtypes "mun/x/claim/types"
+
 
 
 	"github.com/crescent-network/crescent/v2/x/liquidity"
@@ -213,7 +211,7 @@ var (
 		monitoringp.AppModuleBasic{},
 		wasm.AppModuleBasic{},
 		munmodule.AppModuleBasic{},
-		claimmodule.AppModuleBasic{},
+		
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 	)
 
@@ -292,7 +290,7 @@ type App struct {
 
 	MunKeeper munmodulekeeper.Keeper
 
-	ClaimKeeper claimkeeper.Keeper
+	
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	wasmKeeper       wasm.Keeper
@@ -334,7 +332,7 @@ func New(
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey, monitoringptypes.StoreKey,
 		wasm.StoreKey,
 		munmoduletypes.StoreKey,
-		claimtypes.StoreKey,
+		
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
@@ -448,16 +446,6 @@ func New(
 	)
 	munModule := munmodule.NewAppModule(appCodec, app.MunKeeper, app.AccountKeeper, app.BankKeeper)
 
-	app.ClaimKeeper = *claimkeeper.NewKeeper(
-		appCodec,
-		keys[claimtypes.StoreKey],
-		app.BankKeeper,
-		app.DistrKeeper,
-		app.GovKeeper,
-		app.LiquidityKeeper,
-		app.LiquidStakingKeeper,
-	)
-	claimModule := claimmodule.NewAppModule(appCodec, app.ClaimKeeper, app.AccountKeeper, app.BankKeeper, app.DistrKeeper, app.GovKeeper, app.LiquidityKeeper, app.LiquidStakingKeeper)
 
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 	wasmDir := filepath.Join(homePath, "data")
@@ -563,7 +551,7 @@ func New(
 		monitoringModule,
 		wasm.NewAppModule(appCodec, &app.wasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
 		munModule,
-		claimModule,
+
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 
@@ -593,7 +581,7 @@ func New(
 		monitoringptypes.ModuleName,
 		wasm.ModuleName,
 		munmoduletypes.ModuleName,
-		claimtypes.ModuleName,
+
 		// this line is used by starport scaffolding # stargate/app/beginBlockers
 	)
 
@@ -618,7 +606,7 @@ func New(
 		ibctransfertypes.ModuleName,
 		monitoringptypes.ModuleName,
 		munmoduletypes.ModuleName,
-		claimtypes.ModuleName,
+
 		// this line is used by starport scaffolding # stargate/app/endBlockers
 		wasm.ModuleName,
 	)
@@ -626,7 +614,6 @@ func New(
 	// NOTE: The genutils module must occur after staking so that pools are
 	// properly initialized with tokens from genesis accounts.
 	// NOTE: Capability module must occur first so that it can initialize any capabilities
-	// so that other modules that want to create or claim capabilities afterwards in InitChain
 	// can do so safely.
 	app.mm.SetOrderInitGenesis(
 		capabilitytypes.ModuleName,
@@ -649,7 +636,7 @@ func New(
 		feegrant.ModuleName,
 		monitoringptypes.ModuleName,
 		munmoduletypes.ModuleName,
-		claimtypes.ModuleName,
+
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 		wasm.ModuleName,
 	)
@@ -676,7 +663,7 @@ func New(
 		transferModule,
 		monitoringModule,
 		munModule,
-		claimModule,
+
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 	app.sm.RegisterStoreDecoders()
@@ -874,7 +861,6 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(ibchost.ModuleName)
 	paramsKeeper.Subspace(monitoringptypes.ModuleName)
 	paramsKeeper.Subspace(munmoduletypes.ModuleName)
-	paramsKeeper.Subspace(claimtypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 	paramsKeeper.Subspace(wasm.ModuleName)
 
