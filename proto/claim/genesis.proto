@@ -1,0 +1,18 @@
+syntax = "proto3";
+package mun.claim;
+
+import "gogoproto/gogo.proto";
+import "cosmos/base/v1beta1/coin.proto";
+import "claim/claim.proto";
+
+// this line is used by starport scaffolding # genesis/proto/import
+
+option go_package                      = "https://github.com/bitxat/mun/x/claim/types";
+
+// GenesisState defines the claim module's genesis state.
+message GenesisState {
+  repeated Airdrop airdrops = 1 [(gogoproto.nullable) = false];
+
+  // claim_records specifies a list of claim records
+  repeated ClaimRecord claim_records = 2 [(gogoproto.nullable) = false];
+}

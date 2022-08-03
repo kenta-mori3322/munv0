@@ -14,11 +14,11 @@ PROJECT_NAME = $(shell git remote get-url origin | xargs basename -s .git)
 all: install
 
 install: go.sum
-	go install -mod=readonly $(BUILD_FLAGS) ./cmd/mund-manager
+#	go install -mod=readonly $(BUILD_FLAGS) ./cmd/mund-manager
 	go install -mod=readonly $(BUILD_FLAGS) ./cmd/mund
 
 build: go.sum clean
-	go build -mod=mod $(BUILD_FLAGS) -o build/mund-manager ./cmd/mund-manager
+#	go build -mod=mod $(BUILD_FLAGS) -o build/mund-manager ./cmd/mund-manager
 	go build -mod=mod $(BUILD_FLAGS) -o build/mund ./cmd/mund
 
 build-linux:
