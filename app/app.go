@@ -110,12 +110,6 @@ import (
 
 
 
-	"github.com/crescent-network/crescent/v2/x/liquidity"
-	liquiditykeeper "github.com/crescent-network/crescent/v2/x/liquidity/keeper"
-	liquiditytypes "github.com/crescent-network/crescent/v2/x/liquidity/types"
-	"github.com/crescent-network/crescent/v2/x/liquidstaking"
-	liquidstakingkeeper "github.com/crescent-network/crescent/v2/x/liquidstaking/keeper"
-	liquidstakingtypes "github.com/crescent-network/crescent/v2/x/liquidstaking/types"
 
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 )
