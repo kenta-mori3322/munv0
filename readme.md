@@ -183,7 +183,7 @@ mund keys add validator3 --keyring-backend test
 curl http://167.99.6.48:26657/genesis? | jq ".result.genesis" > ~/.mun/config/genesis.json
 
 ## update seed in config.json to make p2p connection
-seeds = "90b438c39d742bea82178e0b4548eca4dcf83395@167.99.6.48:26656"
+seeds = "d33c86f138b34301ab041ea1371b3d682f33af9c@167.99.6.48:26656"
 
 ## replace stake to TMUN
 ```
