@@ -322,7 +322,7 @@ function longToNumber(long: Long): number {
   return long.toNumber();
 }
 
-if (false) {
+if (util.Long !== Long) {
   util.Long = Long as any;
   configure();
 }

@@ -9,7 +9,7 @@ import { Supply } from "./module/types/cosmos/bank/v1beta1/bank"
 import { DenomUnit } from "./module/types/cosmos/bank/v1beta1/bank"
 import { Metadata } from "./module/types/cosmos/bank/v1beta1/bank"
 import { Balance } from "./module/types/cosmos/bank/v1beta1/genesis"
-
+import { calculateFee, GasPrice, isMsgSubmitProposalEncodeObject } from "@cosmjs/stargate"
 
 export { SendAuthorization, Params, SendEnabled, Input, Output, Supply, DenomUnit, Metadata, Balance };
 
@@ -237,15 +237,16 @@ export default {
 		async QueryAllTokenBalances({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
 			try {
 				const key = params ?? {};
-				const wasmClient=await initCosmClient(rootGetters)
-				let balance = await wasmClient.queryContractSmart("mun1suhgf5svhu4usrurvxzlgn54ksxmn8gljarjtxqnapv8kjnp4nrsfttf7h",
+				const wasmClient = await initCosmClient(rootGetters)
+				let balance = await wasmClient.queryContractSmart(key.tokenAddress,
 				{
 					balance:{
-						address:"mun1dfjns5lk748pzrd79z4zp9k22mrchm2a7ym0yh"
+						address: key.address
 					}
 				})
 				
-				let value = [{denom: 'DGM', amount: balance.balance}]
+				let balances = [{denom: 'DGM', amount: balance.balance}]
+				let value = { balances:balances, pagination:{next_key: null, total: '1'}}
 
 				commit('QUERY', { query: 'AllTokenBalances', key: { params: {...key}, query}, value })
 				if (subscribe) commit('SUBSCRIBE', { action: 'QueryAllTokenBalances', payload: { options: { all }, params: {...key},query }})
@@ -393,8 +394,6 @@ export default {
 			try {
 				const txClient=await initTxClient(rootGetters)
 				const msg = await txClient.msgSend(value)
-			console.log("msg")
-			console.log(msg)
 
 				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
 	gas: "200000" }, memo})
@@ -407,7 +406,38 @@ export default {
 				}
 			}
 		},
-		
+		async sendMsgTokenSend({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const wasmClient = await initCosmClient(rootGetters)
+				const gasPrice = GasPrice.fromString("0.05utmun");
+				const executeFee = calculateFee(300_000, gasPrice);
+
+				const msgSend =
+				{
+					transfer: {
+						recipient: value.to_address,
+						amount: value.amount[0].amount
+					}
+			
+				}
+			
+				const result = await wasmClient.execute(
+					value.from_address,
+					value.tokenAddress,
+					msgSend,
+					executeFee,
+					"",
+				);
+
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgTokenSend:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgTokenSend:Token Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
 		async MsgMultiSend({ rootGetters }, { value }) {
 			try {
 				const txClient=await initTxClient(rootGetters)

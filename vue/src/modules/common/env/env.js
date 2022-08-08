@@ -17,6 +17,7 @@ const addrPrefix = process.env.VUE_APP_ADDRESS_PREFIX || 'cosmos'
 const coinDenom = process.env.VUE_APP_COIN_DENOM || 'STAKE'
 const coinDenomMin = process.env.VUE_APP_COIN_DENOM_MIN || 'stake'
 const coinDenomMinDecimal = process.env.VUE_APP_COIN_DENOM_MIN_DECIMAL || '6'
+const tokenAddress = process.env.VUE_APP_DGM_TOKEN || ''
 
 export default {
   namespaced: true,
@@ -37,7 +38,8 @@ export default {
       initialized: false,
       coinDenom: coinDenom,
       coinDenomMin: coinDenomMin,
-      coinDenomMinDecimal: coinDenomMinDecimal
+      coinDenomMinDecimal: coinDenomMinDecimal,
+      tokenAddress: tokenAddress
     }
   },
   getters: {
@@ -56,6 +58,7 @@ export default {
     coinDenom: (state) => state.coinDenom,
     coinDenomMin: (state) => state.coinDenomMin,
     coinDenomMinDecimal: (state) => state.coinDenomMinDecimal,
+    tokenAddress: (state) => state.tokenAddress,
   },
   mutations: {
     SET_CONFIG(state, config) {
@@ -87,6 +90,9 @@ export default {
       if (config.coinDenomMinDecimal || config.offline) {
         state.coinDenomMinDecimal = config.coinDenomMinDecimal
       }
+      if (config.tokenAddress || config.offline) {
+        state.tokenAddress = config.tokenAddress
+      }
     },
     CONNECT(state, { client }) {
       state.client = client
@@ -111,6 +117,9 @@ export default {
     },
     SET_TX_API(state, txapi) {
       state.getTXApi = txapi
+    },
+    SET_DGM_ADDRESS(state, tokenAddress) {
+      state.tokenAddress = tokenAddress
     }
   },
   actions: {
@@ -127,7 +136,8 @@ export default {
         sdkVersion: 'Stargate',
         getTXApi: rpcNode + '/tx?hash=0x',
         offline: false,
-        refresh: 5000
+        refresh: 5000,
+        tokenAddress: localStorage.getItem('tokenAddress') ? localStorage.getItem('tokenAddress') : process.env.VUE_APP_DGM_TOKEN
       }
     ) {
       try {
@@ -139,6 +149,9 @@ export default {
     },
     setTxAPI({ commit }, payload) {
       commit('SET_TX_API', payload)
+    },
+    setDGMAddress({commit}, payload) {
+      commit('SET_DGM_ADDRESS', payload.tokenAddress)
     },
     async setConnectivity({ commit }, payload) {
       switch (payload.connection) {
@@ -175,7 +188,8 @@ export default {
         sdkVersion: 'Stargate',
         offline: false,
         refresh: 5000,
-        getTXApi: 'http://localhost:26657/tx?hash=0x'
+        getTXApi: 'http://localhost:26657/tx?hash=0x',
+        tokenAddress: ''
       }
     ) {
       try {
@@ -208,6 +222,21 @@ export default {
           client.on('rpc-status', (status) =>
             dispatch('setConnectivity', { connection: 'rpc', status: status })
           )
+
+          const token = localStorage.getItem('tokenAddress')
+
+          // Update config token address
+          if (token) {
+            config.tokenAddress = token
+          } else {
+            config.tokenAddress = process.env.VUE_APP_DGM_TOKEN
+
+            // Update local storage token address if valid
+            if (process.env.VUE_APP_DGM_TOKEN) {
+              localStorage.setItem('tokenAddress', process.env.VUE_APP_DGM_TOKEN)
+            }
+          }
+          
           commit('SET_CONFIG', config)
           await dispatch(
             'cosmos.staking.v1beta1/QueryParams',
@@ -243,6 +272,20 @@ export default {
           if (config.apiNode != state.apiNode) {
             reconnectClient = true
           }
+
+          const token = localStorage.getItem('tokenAddress')
+          // Update config token address
+          if (token) {
+            config.tokenAddress = token
+          } else {
+            config.tokenAddress = process.env.VUE_APP_DGM_TOKEN
+
+            // Update local storage token address if valid
+            if (process.env.VUE_APP_DGM_TOKEN) {
+              localStorage.setItem('tokenAddress', process.env.VUE_APP_DGM_TOKEN)
+            }
+          }
+
           commit('SET_CONFIG', config)
 
           if (reconnectWS && config.wsNode) {
