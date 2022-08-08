@@ -20,6 +20,12 @@ go version
 ```
 // Should return go version go1.18 linux/amd64
 
+## Clone repository
+```
+git clone https://github.com/bitxat/mun
+cd mun
+```
+
 ## Install the executables
 
 ```
