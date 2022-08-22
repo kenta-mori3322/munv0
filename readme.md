@@ -1,5 +1,17 @@
 # Munchain deployment script
+## Infrastructure
+```
+Recommended configuration:
+Number of CPUs: 4
+Memory: 16GB
+OS: Ubuntu 22.04 LTS
+Allow all incoming connections from TCP port 26656 and 26657
+Static IP address
+The recommended configuration from AWS is the equivalent of a t2.large machine
+with 300GB EBS attached storage.
+```
 
+## Installing prerequisites
 ```
 sudo apt update
 sudo apt upgrade -y
