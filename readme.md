@@ -59,7 +59,7 @@ sudo cp $(which mund-manager) /usr/bin
 
 ## Initialize the validator, where "validator" is a moniker name
 ```
-mund init validator --chain-id test
+mund init validator --chain-id testmun
 ```
  
 ## Validator
@@ -89,7 +89,7 @@ mund add-genesis-account $(mund keys show test1 -a --keyring-backend test) 50000
 
 ## Generate CreateValidator signed transaction
 ```
-mund gentx validator 20000000000000utmun --keyring-backend test --chain-id test
+mund gentx validator 20000000000000utmun --keyring-backend test --chain-id testmun
 ```
 
 ## Collect genesis transactions
@@ -182,9 +182,9 @@ cp $(which mund) ~/.mun/upgrade_manager/genesis/bin
 sudo cp $(which mund-manager) /usr/bin
 ```
 
-## Initialize the validator, where "validator3" is a moniker name
+## Initialize the validator with a moniker name
 ```
-mund init validator3 --chain-id test
+mund init [moniker_name] --chain-id testmun
 ```
 
 ## Validator3
@@ -245,4 +245,4 @@ sudo systemctl enable mund
 sudo systemctl start mund
 ```
 ## After buying TMUN, he can become a validator by staking it.
-mund tx staking create-validator --from validator3 --moniker validator3 --pubkey $(mund tendermint show-validator) --chain-id test --keyring-backend test --amount 2000000000000000utmun --commission-max-change-rate 0.01 --commission-max-rate 0.2 --commission-rate 0.1 --min-self-delegation 1 --fees 20000utmun -y
+mund tx staking create-validator --from [wallet_name] --moniker [moniker_name] --pubkey $(mund tendermint show-validator) --chain-id testmun --keyring-backend test --amount 2000000000000000utmun --commission-max-change-rate 0.01 --commission-max-rate 0.2 --commission-rate 0.1 --min-self-delegation 1 --fees 20000utmun -y
