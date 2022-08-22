@@ -196,7 +196,10 @@ mund keys add [wallet_name] --keyring-backend test
 curl http://167.99.6.48:26657/genesis? | jq ".result.genesis" > ~/.mun/config/genesis.json
 
 ## update seed in config.json to make p2p connection
+```
+nano ~/.mun/config/config.toml
 seeds = "d33c86f138b34301ab041ea1371b3d682f33af9c@167.99.6.48:26656"
+```
 
 ## replace stake to TMUN
 ```
