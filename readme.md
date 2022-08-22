@@ -57,7 +57,7 @@ cp $(which mund) ~/.mun/upgrade_manager/genesis/bin
 sudo cp $(which mund-manager) /usr/bin
 ```
 
-## Initialize the validator with a moniker name
+## Initialize the validator with a moniker name(Example moniker: solid-moon-rock)
 ```
 mund init [moniker_name] --chain-id testmun
 ```
@@ -68,12 +68,12 @@ mund keys add [wallet_name] --keyring-backend test
 ```
 
 ## Fetch genesis.json from genesis node
-curl http://167.99.6.48:26657/genesis? | jq ".result.genesis" > ~/.mun/config/genesis.json
+curl --tlsv1 https://node1.mun.money/genesis? | jq ".result.genesis" > ~/.mun/config/genesis.json
 
 ## Update seed in config.json to make p2p connection
 ```
 nano ~/.mun/config/config.toml
-seeds = "d33c86f138b34301ab041ea1371b3d682f33af9c@167.99.6.48:26656"
+seeds = "d33c86f138b34301ab041ea1371b3d682f33af9c@node1.mun.money:26656"
 ```
 
 ## Replace stake to TMUN
