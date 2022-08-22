@@ -62,7 +62,7 @@ sudo cp $(which mund-manager) /usr/bin
 mund init [moniker_name] --chain-id testmun
 ```
 
-## Add a new wallet address and buy TMUN to it, store seeds.
+## Add a new wallet address, store seeds and buy TMUN to it. 
 ```
 mund keys add [wallet_name] --keyring-backend test
 ```
