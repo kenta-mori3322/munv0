@@ -124,7 +124,7 @@ cd ~/.mun
 pwd
 ```
 
-## Create log files for mund
+## Create log files and starts running the node
 ```
 make log-files
 
