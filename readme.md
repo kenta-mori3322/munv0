@@ -187,9 +187,9 @@ sudo cp $(which mund-manager) /usr/bin
 mund init [moniker_name] --chain-id testmun
 ```
 
-## Validator3
+## Add a new wallet address and buy TMUN to it, store seeds.
 ```
-mund keys add validator3 --keyring-backend test
+mund keys add [wallet_name] --keyring-backend test
 ```
 
 ## update genesis.json from the first node
