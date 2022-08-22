@@ -70,7 +70,7 @@ mund keys add [wallet_name] --keyring-backend test
 ## Fetch genesis.json from genesis node
 curl --tlsv1 https://node1.mun.money/genesis? | jq ".result.genesis" > ~/.mun/config/genesis.json
 
-## Update seed in config.json to make p2p connection
+## Update seed in config.toml to make p2p connection
 ```
 nano ~/.mun/config/config.toml
 seeds = "d33c86f138b34301ab041ea1371b3d682f33af9c@node1.mun.money:26656"
