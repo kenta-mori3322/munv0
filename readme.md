@@ -137,7 +137,7 @@ sudo systemctl start mund
 mund status
 ```
 
-## After buying TMUN, he can become a validator by staking it.
+## After buying TMUN, stake it to become a validator.
 **Tips**
 You should wait until node get fully synchronized with the other nodes. You can cross check with genesis node by visiting https://node1.mun.money/status and check the latest block height. You can check your node status through this link https://[Your_IP]:26657/status.
 
