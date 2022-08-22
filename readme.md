@@ -42,6 +42,7 @@ cd mun
 
 ```
 sudo rm -rf ~/.mun
+go mod tidy
 make install
 
 clear
