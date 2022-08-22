@@ -86,7 +86,7 @@ sed -i 's/stake/utmun/g' ~/.mun/config/genesis.json
 sudo nano /etc/systemd/system/mund.service
 ```
 
-## Paste following content(Please make sure to write correct name of user, group and the DAEMON_HOME path)
+## Paste following content(*Please make sure to use correct name of user, group and the DAEMON_HOME path at the below.)
 ```
 [Unit]
 Description=mund
