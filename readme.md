@@ -139,9 +139,12 @@ mund status
 
 ## After buying TMUN, stake it to become a validator.
 **Tips**
-You should wait until node get fully synchronized with the other nodes. You can cross check with genesis node by visiting https://node1.mun.money/status and check the latest block height. You can check your node status through this link https://[Your_IP]:26657/status.
 
-**Transaction to become validator by staking TMUN**
+You should wait until the node gets fully synchronized with other nodes. You can cross check with the genesis node by visiting https://node1.mun.money/status and check the latest block height. You can also check your node status through this link http://[Your_Node_IP]:26657/status.
+
+
+**A transaction to become a validator by staking TMUN**
+
 ```
 mund tx staking create-validator --from [wallet_name] --moniker [moniker_name] --pubkey $(mund tendermint show-validator) --chain-id testmun --keyring-backend test --amount 2000000000000000utmun --commission-max-change-rate 0.01 --commission-max-rate 0.2 --commission-rate 0.1 --min-self-delegation 1 --fees 20000utmun -y
-````
+```
