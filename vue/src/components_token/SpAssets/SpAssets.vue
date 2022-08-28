@@ -66,7 +66,7 @@
     <table class="assets-table">
       <thead v-if="balances.assets.length" class="assets-table__thead">
         <tr>
-          <td>Asset123</td>
+          <td>Asset</td>
           <td></td>
           <td class="assets-table__align-right">Available balance</td>
         </tr>
@@ -90,7 +90,7 @@
               typeof balance.path === 'object'
                 ? 'assets-table__channels--object'
                 : null,
-              'assets-table__channels'
+              'assets-table__channels',
             ]"
           >
             <ul v-if="balance.path">
@@ -159,82 +159,82 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, nextTick, ref, toRefs } from 'vue'
-import { useStore } from 'vuex'
+import { computed, defineComponent, nextTick, ref, toRefs } from "vue";
+import { useStore } from "vuex";
 
-import { useAddress, useAssets } from '../../composables_token'
-import SpDenom from '../SpDenom'
+import { useAddress, useAssets } from "../../composables_token";
+import SpDenom from "../SpDenom";
 
 export default defineComponent({
-  name: 'SpAssets',
+  name: "SpAssets",
   components: { SpDenom },
 
   props: {
     displayLimit: {
       type: Number,
       default: 3,
-      required: false
-    }
+      required: false,
+    },
   },
 
   setup(props) {
     // store
-    let $s = useStore()
+    let $s = useStore();
 
     // state
     const state = ref({
       isLoading: true,
-      searchQuery: '',
+      searchQuery: "",
       balanceList: [],
       displayLimit: props.displayLimit,
-      searchInput: ref<null | { focus: () => null }>(null)
-    })
+      searchInput: ref<null | { focus: () => null }>(null),
+    });
 
     // composables
-    let { address } = useAddress({ $s })
-    let { balances } = useAssets({ $s, opts: { extractChannels: true } })
+    let { address } = useAddress({ $s });
+    let { balances } = useAssets({ $s, opts: { extractChannels: true } });
 
     const filteredBalanceList = computed(() => {
       if (!state.value.searchQuery) {
-        return balances.value.assets.slice(0, state.value.displayLimit)
+        return balances.value.assets.slice(0, state.value.displayLimit);
       }
 
       return balances.value.assets.filter((item) =>
         item.amount.denom.toLowerCase().includes(state.value.searchQuery)
-      )
-    })
+      );
+    });
 
     const noSearchResults = computed(() => {
       return (
         !filteredBalanceList.value.length &&
         state.value.searchQuery.length &&
         !balances.value.isLoading
-      )
-    })
+      );
+    });
 
     const isShowMore = computed(() => {
       if (state.value.searchQuery) {
-        return filteredBalanceList.value.length > state.value.displayLimit
+        return filteredBalanceList.value.length > state.value.displayLimit;
       }
 
       return (
         filteredBalanceList.value.length < balances.value.assets.length &&
         !noSearchResults.value
-      )
-    })
+      );
+    });
 
     const onShowMore = () => {
-      state.value.displayLimit += state.value.displayLimit
-    }
+      state.value.displayLimit += state.value.displayLimit;
+    };
 
     const resetDisplayLimit = () => {
-      state.value.displayLimit = props.displayLimit
-    }
+      state.value.displayLimit = props.displayLimit;
+    };
 
     const resetSearch = () => {
-      state.value.searchQuery = ''
-      nextTick(() => state.value.searchInput?.focus())
-    }
+      state.value.searchQuery = "";
+      nextTick(() => state.value.searchInput?.focus());
+    };
 
     return {
       address,
@@ -245,10 +245,10 @@ export default defineComponent({
       onShowMore,
       resetDisplayLimit,
       resetSearch,
-      ...toRefs(state.value)
-    }
-  }
-})
+      ...toRefs(state.value),
+    };
+  },
+});
 </script>
 
 <style lang="scss" scoped>
@@ -286,7 +286,7 @@ $avatar-offset: 32 + 16;
       position: relative;
       margin: 0px -10px -1px 0;
 
-      > input[type='search'] {
+      > input[type="search"] {
         padding: 0 0 0 36px;
         width: 166px;
         height: 50px;
@@ -390,7 +390,7 @@ $avatar-offset: 32 + 16;
           &:nth-child(n + 3) {
             &:before {
               font-family: sys, serif;
-              content: '→';
+              content: "→";
               display: inline-block;
               margin: 0 5px 0 4px;
             }
@@ -479,7 +479,7 @@ $avatar-offset: 32 + 16;
   /* identical to box height, or 36px */
 
   letter-spacing: -0.02em;
-  font-feature-settings: 'zero';
+  font-feature-settings: "zero";
 
   color: #000000;
   margin-top: 0;
