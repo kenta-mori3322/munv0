@@ -302,10 +302,10 @@ import long from 'long'
 import { computed, defineComponent, PropType, reactive, watch } from 'vue'
 import { useStore } from 'vuex'
 
-import { AssetForUI } from '../composables/useAssets'
-import { Amount } from '../utils/interfaces'
+import { AssetForUI } from '../../composables_token/useAssets'
+import { Amount } from '../../utils/interfaces'
 
-import { useAddress, useAssets } from '../../composables'
+import { useAddress, useAssets } from '../../composables_token'
 import SpAmountSelect from '../SpAmountSelect'
 import SpButton from '../SpButton'
 import SpCard from '../SpCard'
@@ -379,10 +379,11 @@ export default defineComponent({
     // composables
     let { address } = useAddress({ $s })
     let { balances } = useAssets({ $s })
+    let tokenAddress = computed<string>(() => $s.getters['common/env/tokenAddress'])
 
     // actions
     let sendMsgSend = (opts: any) =>
-      $s.dispatch('cosmos.bank.v1beta1/sendMsgSend', opts)
+      $s.dispatch('cosmos.bank.v1beta1/sendMsgTokenSend', opts)
 
     let sendMsgTransfer = (opts: any) =>
       $s.dispatch('ibc.applications.transfer.v1/sendMsgTransfer', opts)
@@ -397,7 +398,7 @@ export default defineComponent({
       }
     }
     let parseAmount = (amount: string): number => {
-      return amount == '' ? 0 : parseInt(amount)
+      return amount == '' ? 0 : +amount
     }
     let resetTx = (): void => {
       state.tx.amount = []
@@ -412,13 +413,13 @@ export default defineComponent({
       state.currentUIState = UI_STATE.TX_SIGNING
 
       let fee: Array<Amount> = state.tx.fees.map((x: AssetForUI) => ({
-        denom: 'u'+x.amount.denom,
-        amount: x.amount.amount == '' ? '0' : "" + x.amount.amount*1e9
+        denom: x.amount.denom,
+        amount: x.amount.amount == '' ? '0' : "" + (+x.amount.amount)*1e6
       }))
 
       let amount: Array<Amount> = state.tx.amount.map((x: AssetForUI) => ({
-        denom: 'u'+x.amount.denom,
-        amount: x.amount.amount == '' ? '0' : "" + (+x.amount.amount)*1e9
+        denom: x.amount.denom,
+        amount: x.amount.amount == '' ? '0' : "" + (+x.amount.amount)*1e6
       }))
 
       let memo = state.tx.memo
@@ -430,7 +431,8 @@ export default defineComponent({
       let payload: any = {
         amount,
         to_address: state.tx.receiver,
-        from_address: address.value
+        from_address: address.value,
+        tokenAddress: tokenAddress.value
       }
 
       try {

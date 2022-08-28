@@ -2,7 +2,7 @@
   <section>
     <header class="assets-header">
       <h2 class="title">Assets</h2>
-      <div v-if="balances.assets.length" class="assets-header__search">
+      <div class="assets-header__search">
         <div class="assets-header__search-content">
           <div class="search-container">
             <span class="search-icon">
@@ -34,7 +34,7 @@
               v-model="searchQuery"
               type="search"
               autocomplete="off"
-              placeholder="Search assets"
+              placeholder="CW20 token address"
               class="input--search"
               @input="resetDisplayLimit"
             />
@@ -60,8 +60,11 @@
               </svg>
             </span>
           </div>
+          <SpButton style="margin-left: 20px;" @click="updateTokenAddress">Update</SpButton>
         </div>
+        
       </div>
+      
     </header>
     <table class="assets-table">
       <thead v-if="balances.assets.length" class="assets-table__thead">
@@ -108,8 +111,7 @@
         </tr>
         <tr v-if="noSearchResults" class="assets-table__row">
           <td class="assets-table__row--no-results" colspan="3">
-            <h4>No results for '{{ searchQuery }}'</h4>
-            <p>Try again with another search</p>
+            <h4>No results</h4>
           </td>
         </tr>
       </tbody>
@@ -194,29 +196,28 @@ export default defineComponent({
     let { address } = useAddress({ $s });
     let { balances } = useAssets({ $s, opts: { extractChannels: true } });
 
-    const filteredBalanceList = computed(() => {
-      if (!state.value.searchQuery) {
-        return balances.value.assets.slice(0, state.value.displayLimit);
+
+    let updateTokenAddress = (): boolean => {
+      if (state.value.searchQuery) {
+        localStorage.setItem('tokenAddress', state.value.searchQuery)
+        $s.dispatch('common/env/setDGMAddress', {tokenAddress: state.value.searchQuery})
       }
 
-      return balances.value.assets.filter((item) =>
-        item.amount.denom.toLowerCase().includes(state.value.searchQuery)
-      );
-    });
+      return true
+    }
+
+    const filteredBalanceList = computed(() => {
+      return balances.value.assets.slice(0, state.value.displayLimit)
+    })
 
     const noSearchResults = computed(() => {
       return (
         !filteredBalanceList.value.length &&
-        state.value.searchQuery.length &&
         !balances.value.isLoading
       );
     });
 
     const isShowMore = computed(() => {
-      if (state.value.searchQuery) {
-        return filteredBalanceList.value.length > state.value.displayLimit;
-      }
-
       return (
         filteredBalanceList.value.length < balances.value.assets.length &&
         !noSearchResults.value
@@ -228,8 +229,8 @@ export default defineComponent({
     };
 
     const resetDisplayLimit = () => {
-      state.value.displayLimit = props.displayLimit;
-    };
+
+    }
 
     const resetSearch = () => {
       state.value.searchQuery = "";
@@ -244,6 +245,7 @@ export default defineComponent({
       isShowMore,
       onShowMore,
       resetDisplayLimit,
+      updateTokenAddress,
       resetSearch,
       ...toRefs(state.value),
     };
@@ -266,12 +268,12 @@ $avatar-offset: 32 + 16;
     width: 100%;
 
     &:first-child {
-      flex: 0 0 66.6666666667%;
-      max-width: 66.6666666667%;
+      flex: 0 0 33.6666666667%;
+      max-width: 33.6666666667%;
     }
     &:last-child {
-      flex: 0 0 33.3333333333%;
-      max-width: 33.3333333333%;
+      flex: 0 0 66.3333333333%;
+      max-width: 66.3333333333%;
     }
   }
 
@@ -288,7 +290,7 @@ $avatar-offset: 32 + 16;
 
       > input[type="search"] {
         padding: 0 0 0 36px;
-        width: 166px;
+        width: 266px;
         height: 50px;
         background: #ffffff;
         border-radius: 10px;

@@ -6,7 +6,7 @@ import { Registry, OfflineSigner, EncodeObject, DirectSecp256k1HdWallet } from "
 import { Api } from "./rest";
 import { MsgMultiSend } from "./types/cosmos/bank/v1beta1/tx";
 import { MsgSend } from "./types/cosmos/bank/v1beta1/tx";
-
+import { SigningCosmWasmClient, CosmWasmClient } from '@cosmjs/cosmwasm-stargate';
 
 const types = [
   ["/cosmos.bank.v1beta1.MsgMultiSend", MsgMultiSend],
@@ -57,7 +57,14 @@ const queryClient = async ({ addr: addr }: QueryClientOptions = { addr: "http://
   return new Api({ baseUrl: addr });
 };
 
+const wasmClient = async(wallet: OfflineSigner, {addr: addr}: QueryClientOptions = { addr: "http://localhost:26657" }) =>{
+  if (!wallet) throw MissingWalletError;
+
+  return SigningCosmWasmClient.connectWithSigner(addr, wallet);
+}
+
 export {
   txClient,
   queryClient,
+  wasmClient
 };

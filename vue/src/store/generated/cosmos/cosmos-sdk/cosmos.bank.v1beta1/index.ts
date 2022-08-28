@@ -1,4 +1,4 @@
-import { txClient, queryClient, MissingWalletError , registry} from './module'
+import { txClient, wasmClient, queryClient, MissingWalletError , registry} from './module'
 
 import { SendAuthorization } from "./module/types/cosmos/bank/v1beta1/authz"
 import { Params } from "./module/types/cosmos/bank/v1beta1/bank"
@@ -9,7 +9,7 @@ import { Supply } from "./module/types/cosmos/bank/v1beta1/bank"
 import { DenomUnit } from "./module/types/cosmos/bank/v1beta1/bank"
 import { Metadata } from "./module/types/cosmos/bank/v1beta1/bank"
 import { Balance } from "./module/types/cosmos/bank/v1beta1/genesis"
-
+import { calculateFee, GasPrice, isMsgSubmitProposalEncodeObject } from "@cosmjs/stargate"
 
 export { SendAuthorization, Params, SendEnabled, Input, Output, Supply, DenomUnit, Metadata, Balance };
 
@@ -19,6 +19,11 @@ async function initTxClient(vuexGetters) {
 	})
 }
 
+async function initCosmClient(vuexGetters) {
+	return await wasmClient(vuexGetters['common/wallet/signer'], {
+		addr: vuexGetters['common/env/apiTendermint']
+	})
+}
 async function initQueryClient(vuexGetters) {
 	return await queryClient({
 		addr: vuexGetters['common/env/apiCosmos']
@@ -51,6 +56,7 @@ const getDefaultState = () => {
 	return {
 				Balance: {},
 				AllBalances: {},
+				AllTokenBalances: {},
 				TotalSupply: {},
 				SupplyOf: {},
 				Params: {},
@@ -106,6 +112,12 @@ export default {
 						(<any> params).query=null
 					}
 			return state.AllBalances[JSON.stringify(params)] ?? {}
+		},
+				getAllTokenBalances: (state) => (params = { params: {}}) => {
+					if (!(<any> params).query) {
+						(<any> params).query=null
+					}
+			return state.AllTokenBalances[JSON.stringify(params)] ?? {}
 		},
 				getTotalSupply: (state) => (params = { params: {}}) => {
 					if (!(<any> params).query) {
@@ -222,7 +234,29 @@ export default {
 			}
 		},
 		
-		
+		async QueryAllTokenBalances({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
+			try {
+				const key = params ?? {};
+				const wasmClient = await initCosmClient(rootGetters)
+				let balance = await wasmClient.queryContractSmart(key.tokenAddress,
+				{
+					balance:{
+						address: key.address
+					}
+				})
+				
+				let balances = [{denom: 'DGM', amount: balance.balance}]
+				let value = { balances:balances, pagination:{next_key: null, total: '1'}}
+
+				commit('QUERY', { query: 'AllTokenBalances', key: { params: {...key}, query}, value })
+				if (subscribe) commit('SUBSCRIBE', { action: 'QueryAllTokenBalances', payload: { options: { all }, params: {...key},query }})
+				return getters['getAllTokenBalances']( { params: {...key}, query}) ?? {}
+			} catch (e) {
+				console.log(e)
+				throw new Error('QueryClient:QueryAllTokenBalances API Node Unavailable. Could not perform query: ' + e.message)
+				
+			}
+		},
 		
 		
 		 		
@@ -360,8 +394,6 @@ export default {
 			try {
 				const txClient=await initTxClient(rootGetters)
 				const msg = await txClient.msgSend(value)
-			console.log("msg")
-			console.log(msg)
 
 				const result = await txClient.signAndBroadcast([msg], {fee: { amount: fee, 
 	gas: "200000" }, memo})
@@ -374,7 +406,38 @@ export default {
 				}
 			}
 		},
-		
+		async sendMsgTokenSend({ rootGetters }, { value, fee = [], memo = '' }) {
+			try {
+				const wasmClient = await initCosmClient(rootGetters)
+				const gasPrice = GasPrice.fromString("0.05utmun");
+				const executeFee = calculateFee(300_000, gasPrice);
+
+				const msgSend =
+				{
+					transfer: {
+						recipient: value.to_address,
+						amount: value.amount[0].amount
+					}
+			
+				}
+			
+				const result = await wasmClient.execute(
+					value.from_address,
+					value.tokenAddress,
+					msgSend,
+					executeFee,
+					"",
+				);
+
+				return result
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgTokenSend:Init Could not initialize signing client. Wallet is required.')
+				}else{
+					throw new Error('TxClient:MsgTokenSend:Token Send Could not broadcast Tx: '+ e.message)
+				}
+			}
+		},
 		async MsgMultiSend({ rootGetters }, { value }) {
 			try {
 				const txClient=await initTxClient(rootGetters)

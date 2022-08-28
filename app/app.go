@@ -100,12 +100,13 @@ import (
 	"github.com/ignite/cli/ignite/pkg/openapiconsole"
 	"github.com/prometheus/client_golang/prometheus"
 
-	monitoringp "github.com/tendermint/spn/x/monitoringp"
-	monitoringpkeeper "github.com/tendermint/spn/x/monitoringp/keeper"
-	monitoringptypes "github.com/tendermint/spn/x/monitoringp/types"
 	munmodule "mun/x/mun"
 	munmodulekeeper "mun/x/mun/keeper"
 	munmoduletypes "mun/x/mun/types"
+
+	monitoringp "github.com/tendermint/spn/x/monitoringp"
+	monitoringpkeeper "github.com/tendermint/spn/x/monitoringp/keeper"
+	monitoringptypes "github.com/tendermint/spn/x/monitoringp/types"
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 )
 
