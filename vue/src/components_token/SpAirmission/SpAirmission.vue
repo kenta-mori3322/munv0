@@ -75,7 +75,7 @@
     <!-- feedbacks -->
     <div v-if="isTxOngoing" class="feedback">
       <div class="loading-spinner">
-        <SpSpinner size="46"></SpSpinner>
+        <SpSpinner :size="46"></SpSpinner>
       </div>
       <div style="width: 50%; height: 24px" />
 
