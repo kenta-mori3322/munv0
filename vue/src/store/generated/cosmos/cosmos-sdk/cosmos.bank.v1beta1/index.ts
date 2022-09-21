@@ -238,7 +238,7 @@ export default {
 			try {
 				const key = params ?? {};
 				const wasmClient = await initCosmClient(rootGetters)
-				let balance = await wasmClient.queryContractSmart("mun1suhgf5svhu4usrurvxzlgn54ksxmn8gljarjtxqnapv8kjnp4nrsfttf7h",
+				let balance = await wasmClient.queryContractSmart(key.tokenAddress,
 				{
 					balance:{
 						address: key.address
@@ -423,7 +423,7 @@ export default {
 			
 				const result = await wasmClient.execute(
 					value.from_address,
-					"mun1suhgf5svhu4usrurvxzlgn54ksxmn8gljarjtxqnapv8kjnp4nrsfttf7h",
+					value.tokenAddress,
 					msgSend,
 					executeFee,
 					"",

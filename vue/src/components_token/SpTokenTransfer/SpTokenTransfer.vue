@@ -3,7 +3,7 @@
     <!-- feedbacks -->
     <div v-if="isTxOngoing" class="feedback">
       <div class="loading-spinner">
-        <SpSpinner size="46"></SpSpinner>
+        <SpSpinner :size="46"></SpSpinner>
       </div>
       <div style="width: 100%; height: 24px" />
 
@@ -277,7 +277,7 @@
           <SpCard>
             <template #top>
               <div class="qrcode-wrapper">
-                <SpQrCode :value="address" color="#000" width="112" />
+                <SpQrCode :value="address" color="#000" :width="112" />
               </div>
             </template>
 
@@ -379,6 +379,7 @@ export default defineComponent({
     // composables
     let { address } = useAddress({ $s })
     let { balances } = useAssets({ $s })
+    let tokenAddress = computed<string>(() => $s.getters['common/env/tokenAddress'])
 
     // actions
     let sendMsgSend = (opts: any) =>
@@ -430,7 +431,8 @@ export default defineComponent({
       let payload: any = {
         amount,
         to_address: state.tx.receiver,
-        from_address: address.value
+        from_address: address.value,
+        tokenAddress: tokenAddress.value
       }
 
       try {

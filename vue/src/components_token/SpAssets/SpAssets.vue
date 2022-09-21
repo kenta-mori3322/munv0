@@ -2,7 +2,7 @@
   <section>
     <header class="assets-header">
       <h2 class="title">Assets</h2>
-      <div v-if="balances.assets.length" class="assets-header__search">
+      <div class="assets-header__search">
         <div class="assets-header__search-content">
           <div class="search-container">
             <span class="search-icon">
@@ -34,7 +34,7 @@
               v-model="searchQuery"
               type="search"
               autocomplete="off"
-              placeholder="Search assets"
+              placeholder="CW20 token address"
               class="input--search"
               @input="resetDisplayLimit"
             />
@@ -60,8 +60,11 @@
               </svg>
             </span>
           </div>
+          <SpButton style="margin-left: 20px;" @click="updateTokenAddress">Update</SpButton>
         </div>
+        
       </div>
+      
     </header>
     <table class="assets-table">
       <thead v-if="balances.assets.length" class="assets-table__thead">
@@ -90,7 +93,7 @@
               typeof balance.path === 'object'
                 ? 'assets-table__channels--object'
                 : null,
-              'assets-table__channels'
+              'assets-table__channels',
             ]"
           >
             <ul v-if="balance.path">
@@ -108,8 +111,7 @@
         </tr>
         <tr v-if="noSearchResults" class="assets-table__row">
           <td class="assets-table__row--no-results" colspan="3">
-            <h4>No results for '{{ searchQuery }}'</h4>
-            <p>Try again with another search</p>
+            <h4>No results</h4>
           </td>
         </tr>
       </tbody>
@@ -159,82 +161,81 @@
 </template>
 
 <script lang="ts">
-import { computed, defineComponent, nextTick, ref, toRefs } from 'vue'
-import { useStore } from 'vuex'
+import { computed, defineComponent, nextTick, ref, toRefs } from "vue";
+import { useStore } from "vuex";
 
-import { useAddress, useAssets } from '../../composables_token'
-import SpDenom from '../SpDenom'
+import { useAddress, useAssets } from "../../composables_token";
+import SpDenom from "../SpDenom";
 
 export default defineComponent({
-  name: 'SpAssets',
+  name: "SpAssets",
   components: { SpDenom },
 
   props: {
     displayLimit: {
       type: Number,
       default: 3,
-      required: false
-    }
+      required: false,
+    },
   },
 
   setup(props) {
     // store
-    let $s = useStore()
+    let $s = useStore();
 
     // state
     const state = ref({
       isLoading: true,
-      searchQuery: '',
+      searchQuery: "",
       balanceList: [],
       displayLimit: props.displayLimit,
-      searchInput: ref<null | { focus: () => null }>(null)
-    })
+      searchInput: ref<null | { focus: () => null }>(null),
+    });
 
     // composables
-    let { address } = useAddress({ $s })
-    let { balances } = useAssets({ $s, opts: { extractChannels: true } })
+    let { address } = useAddress({ $s });
+    let { balances } = useAssets({ $s, opts: { extractChannels: true } });
 
-    const filteredBalanceList = computed(() => {
-      if (!state.value.searchQuery) {
-        return balances.value.assets.slice(0, state.value.displayLimit)
+
+    let updateTokenAddress = (): boolean => {
+      if (state.value.searchQuery) {
+        localStorage.setItem('tokenAddress', state.value.searchQuery)
+        $s.dispatch('common/env/setDGMAddress', {tokenAddress: state.value.searchQuery})
       }
 
-      return balances.value.assets.filter((item) =>
-        item.amount.denom.toLowerCase().includes(state.value.searchQuery)
-      )
+      return true
+    }
+
+    const filteredBalanceList = computed(() => {
+      return balances.value.assets.slice(0, state.value.displayLimit)
     })
 
     const noSearchResults = computed(() => {
       return (
         !filteredBalanceList.value.length &&
-        state.value.searchQuery.length &&
         !balances.value.isLoading
-      )
-    })
+      );
+    });
 
     const isShowMore = computed(() => {
-      if (state.value.searchQuery) {
-        return filteredBalanceList.value.length > state.value.displayLimit
-      }
-
       return (
         filteredBalanceList.value.length < balances.value.assets.length &&
         !noSearchResults.value
-      )
-    })
+      );
+    });
 
     const onShowMore = () => {
-      state.value.displayLimit += state.value.displayLimit
-    }
+      state.value.displayLimit += state.value.displayLimit;
+    };
 
     const resetDisplayLimit = () => {
-      state.value.displayLimit = props.displayLimit
+
     }
 
     const resetSearch = () => {
-      state.value.searchQuery = ''
-      nextTick(() => state.value.searchInput?.focus())
-    }
+      state.value.searchQuery = "";
+      nextTick(() => state.value.searchInput?.focus());
+    };
 
     return {
       address,
@@ -244,11 +245,12 @@ export default defineComponent({
       isShowMore,
       onShowMore,
       resetDisplayLimit,
+      updateTokenAddress,
       resetSearch,
-      ...toRefs(state.value)
-    }
-  }
-})
+      ...toRefs(state.value),
+    };
+  },
+});
 </script>
 
 <style lang="scss" scoped>
@@ -266,12 +268,12 @@ $avatar-offset: 32 + 16;
     width: 100%;
 
     &:first-child {
-      flex: 0 0 66.6666666667%;
-      max-width: 66.6666666667%;
+      flex: 0 0 33.6666666667%;
+      max-width: 33.6666666667%;
     }
     &:last-child {
-      flex: 0 0 33.3333333333%;
-      max-width: 33.3333333333%;
+      flex: 0 0 66.3333333333%;
+      max-width: 66.3333333333%;
     }
   }
 
@@ -286,9 +288,9 @@ $avatar-offset: 32 + 16;
       position: relative;
       margin: 0px -10px -1px 0;
 
-      > input[type='search'] {
+      > input[type="search"] {
         padding: 0 0 0 36px;
-        width: 166px;
+        width: 266px;
         height: 50px;
         background: #ffffff;
         border-radius: 10px;
@@ -390,7 +392,7 @@ $avatar-offset: 32 + 16;
           &:nth-child(n + 3) {
             &:before {
               font-family: sys, serif;
-              content: '→';
+              content: "→";
               display: inline-block;
               margin: 0 5px 0 4px;
             }
@@ -479,7 +481,7 @@ $avatar-offset: 32 + 16;
   /* identical to box height, or 36px */
 
   letter-spacing: -0.02em;
-  font-feature-settings: 'zero';
+  font-feature-settings: "zero";
 
   color: #000000;
   margin-top: 0;

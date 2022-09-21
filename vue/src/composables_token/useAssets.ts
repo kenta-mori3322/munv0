@@ -40,6 +40,7 @@ export default function ({ $s, opts }: Params): Response {
   // composables
   let { address } = useAddress({ $s })
   let { getDenomTrace } = useDenom({ $s })
+  let tokenAddress = computed<string>(() => $s.getters['common/env/tokenAddress'])
 
   // actions
   let queryAllBalances = (opts: any) =>
@@ -49,7 +50,7 @@ export default function ({ $s, opts }: Params): Response {
   onBeforeMount(async () => {
     if (address.value) {
       queryAllBalances({
-        params: { address: address.value },
+        params: { address: address.value, tokenAddress: tokenAddress.value},
         options: { subscribe: true }
       }).finally(() => {
         balances.value.isLoading = false
@@ -61,7 +62,7 @@ export default function ({ $s, opts }: Params): Response {
   let balancesRaw = computed<any[]>(() => {
     return (
       $s.getters['cosmos.bank.v1beta1/getAllTokenBalances']({
-        params: { address: address.value }
+        params: { address: address.value, tokenAddress: tokenAddress.value},
       })?.balances ?? []
     )
   })
@@ -99,11 +100,11 @@ export default function ({ $s, opts }: Params): Response {
 
   //watch
   watch(
-    () => [address.value, balancesRaw.value],
+    () => [address.value, balancesRaw.value, tokenAddress.value],
     async ([newAddress], [oldAddress]) => {
       if (newAddress !== oldAddress) {
         queryAllBalances({
-          params: { address: newAddress },
+          params: { address: address.value, tokenAddress: tokenAddress.value},
           options: { subscribe: true }
         }).finally(() => {
           balances.value.isLoading = false
