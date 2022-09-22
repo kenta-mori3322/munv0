@@ -90,7 +90,7 @@ func (m *GenesisState) GetClaimRecords() []ClaimRecord {
 }
 
 func init() {
-	proto.RegisterType((*GenesisState)(nil), "publicawesome.stargaze.claim.v1beta1.GenesisState")
+	proto.RegisterType((*GenesisState)(nil), "mun.claim.v1beta1.GenesisState")
 }
 
 func init() {

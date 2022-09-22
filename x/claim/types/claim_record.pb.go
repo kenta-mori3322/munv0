@@ -124,8 +124,8 @@ func (m *ClaimRecord) GetActionCompleted() []bool {
 }
 
 func init() {
-	proto.RegisterEnum("publicawesome.stargaze.claim.v1beta1.Action", Action_name, Action_value)
-	proto.RegisterType((*ClaimRecord)(nil), "publicawesome.stargaze.claim.v1beta1.ClaimRecord")
+	proto.RegisterEnum("mun.claim.v1beta1.Action", Action_name, Action_value)
+	proto.RegisterType((*ClaimRecord)(nil), "mun.claim.v1beta1.ClaimRecord")
 }
 
 func init() {

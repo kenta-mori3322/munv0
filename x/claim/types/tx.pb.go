@@ -122,7 +122,7 @@ func (m *MsgInitialClaimResponse) GetClaimedAmount() github_com_cosmos_cosmos_sd
 type MsgClaimFor struct {
 	Sender  string `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
 	Address string `protobuf:"bytes,2,opt,name=address,proto3" json:"address,omitempty"`
-	Action  Action `protobuf:"varint,3,opt,name=action,proto3,enum=publicawesome.stargaze.claim.v1beta1.Action" json:"action,omitempty"`
+	Action  Action `protobuf:"varint,3,opt,name=action,proto3,enum=mun.claim.v1beta1.Action" json:"action,omitempty"`
 }
 
 func (m *MsgClaimFor) Reset()         { *m = MsgClaimFor{} }
@@ -233,10 +233,10 @@ func (m *MsgClaimForResponse) GetClaimedAmount() github_com_cosmos_cosmos_sdk_ty
 }
 
 func init() {
-	proto.RegisterType((*MsgInitialClaim)(nil), "publicawesome.stargaze.claim.v1beta1.MsgInitialClaim")
-	proto.RegisterType((*MsgInitialClaimResponse)(nil), "publicawesome.stargaze.claim.v1beta1.MsgInitialClaimResponse")
-	proto.RegisterType((*MsgClaimFor)(nil), "publicawesome.stargaze.claim.v1beta1.MsgClaimFor")
-	proto.RegisterType((*MsgClaimForResponse)(nil), "publicawesome.stargaze.claim.v1beta1.MsgClaimForResponse")
+	proto.RegisterType((*MsgInitialClaim)(nil), "mun.claim.v1beta1.MsgInitialClaim")
+	proto.RegisterType((*MsgInitialClaimResponse)(nil), "mun.claim.v1beta1.MsgInitialClaimResponse")
+	proto.RegisterType((*MsgClaimFor)(nil), "mun.claim.v1beta1.MsgClaimFor")
+	proto.RegisterType((*MsgClaimForResponse)(nil), "mun.claim.v1beta1.MsgClaimForResponse")
 }
 
 func init() { proto.RegisterFile("stargaze/claim/v1beta1/tx.proto", fileDescriptor_9ee4a19153cf6635) }
@@ -301,7 +301,7 @@ func NewMsgClient(cc grpc1.ClientConn) MsgClient {
 
 func (c *msgClient) InitialClaim(ctx context.Context, in *MsgInitialClaim, opts ...grpc.CallOption) (*MsgInitialClaimResponse, error) {
 	out := new(MsgInitialClaimResponse)
-	err := c.cc.Invoke(ctx, "/publicawesome.stargaze.claim.v1beta1.Msg/InitialClaim", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/mun.claim.v1beta1.Msg/InitialClaim", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -310,7 +310,7 @@ func (c *msgClient) InitialClaim(ctx context.Context, in *MsgInitialClaim, opts 
 
 func (c *msgClient) ClaimFor(ctx context.Context, in *MsgClaimFor, opts ...grpc.CallOption) (*MsgClaimForResponse, error) {
 	out := new(MsgClaimForResponse)
-	err := c.cc.Invoke(ctx, "/publicawesome.stargaze.claim.v1beta1.Msg/ClaimFor", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/mun.claim.v1beta1.Msg/ClaimFor", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -349,7 +349,7 @@ func _Msg_InitialClaim_Handler(srv interface{}, ctx context.Context, dec func(in
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/publicawesome.stargaze.claim.v1beta1.Msg/InitialClaim",
+		FullMethod: "/mun.claim.v1beta1.Msg/InitialClaim",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MsgServer).InitialClaim(ctx, req.(*MsgInitialClaim))
@@ -367,7 +367,7 @@ func _Msg_ClaimFor_Handler(srv interface{}, ctx context.Context, dec func(interf
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/publicawesome.stargaze.claim.v1beta1.Msg/ClaimFor",
+		FullMethod: "/mun.claim.v1beta1.Msg/ClaimFor",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MsgServer).ClaimFor(ctx, req.(*MsgClaimFor))
@@ -376,7 +376,7 @@ func _Msg_ClaimFor_Handler(srv interface{}, ctx context.Context, dec func(interf
 }
 
 var _Msg_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "publicawesome.stargaze.claim.v1beta1.Msg",
+	ServiceName: "mun.claim.v1beta1.Msg",
 	HandlerType: (*MsgServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

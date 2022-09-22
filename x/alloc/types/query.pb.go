@@ -113,8 +113,8 @@ func (m *QueryParamsResponse) GetParams() Params {
 }
 
 func init() {
-	proto.RegisterType((*QueryParamsRequest)(nil), "publicawesome.stargaze.alloc.v1beta1.QueryParamsRequest")
-	proto.RegisterType((*QueryParamsResponse)(nil), "publicawesome.stargaze.alloc.v1beta1.QueryParamsResponse")
+	proto.RegisterType((*QueryParamsRequest)(nil), "mun.alloc.v1beta1.QueryParamsRequest")
+	proto.RegisterType((*QueryParamsResponse)(nil), "mun.alloc.v1beta1.QueryParamsResponse")
 }
 
 func init() {
@@ -170,7 +170,7 @@ func NewQueryClient(cc grpc1.ClientConn) QueryClient {
 
 func (c *queryClient) Params(ctx context.Context, in *QueryParamsRequest, opts ...grpc.CallOption) (*QueryParamsResponse, error) {
 	out := new(QueryParamsResponse)
-	err := c.cc.Invoke(ctx, "/publicawesome.stargaze.alloc.v1beta1.Query/Params", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/mun.alloc.v1beta1.Query/Params", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -205,7 +205,7 @@ func _Query_Params_Handler(srv interface{}, ctx context.Context, dec func(interf
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/publicawesome.stargaze.alloc.v1beta1.Query/Params",
+		FullMethod: "/mun.alloc.v1beta1.Query/Params",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(QueryServer).Params(ctx, req.(*QueryParamsRequest))
@@ -214,7 +214,7 @@ func _Query_Params_Handler(srv interface{}, ctx context.Context, dec func(interf
 }
 
 var _Query_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "publicawesome.stargaze.alloc.v1beta1.Query",
+	ServiceName: "mun.alloc.v1beta1.Query",
 	HandlerType: (*QueryServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

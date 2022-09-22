@@ -162,9 +162,9 @@ func (m *Params) GetWeightedDeveloperRewardsReceivers() []WeightedAddress {
 }
 
 func init() {
-	proto.RegisterType((*WeightedAddress)(nil), "publicawesome.stargaze.alloc.v1beta1.WeightedAddress")
-	proto.RegisterType((*DistributionProportions)(nil), "publicawesome.stargaze.alloc.v1beta1.DistributionProportions")
-	proto.RegisterType((*Params)(nil), "publicawesome.stargaze.alloc.v1beta1.Params")
+	proto.RegisterType((*WeightedAddress)(nil), "mun.alloc.v1beta1.WeightedAddress")
+	proto.RegisterType((*DistributionProportions)(nil), "mun.alloc.v1beta1.DistributionProportions")
+	proto.RegisterType((*Params)(nil), "mun.alloc.v1beta1.Params")
 }
 
 func init() {

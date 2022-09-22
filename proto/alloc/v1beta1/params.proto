@@ -1,6 +1,6 @@
 syntax = "proto3";
 
-package publicawesome.stargaze.alloc.v1beta1;
+package mun.alloc.v1beta1;
 
 option go_package = "mun/x/alloc/types";
 

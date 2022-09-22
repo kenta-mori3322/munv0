@@ -1,9 +1,9 @@
 syntax = "proto3";
-package publicawesome.stargaze.alloc.v1beta1;
+package mun.alloc.v1beta1;
 
 import "gogoproto/gogo.proto";
 import "google/api/annotations.proto";
-import "stargaze/alloc/v1beta1/params.proto";
+import "alloc/v1beta1/params.proto";
 // this line is used by starport scaffolding # 1
 
 option go_package = "mun/x/alloc/types";
@@ -21,7 +21,7 @@ message QueryParamsResponse {
 service Query {
   // this line is used by starport scaffolding # 2
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
-    option (google.api.http).get = "/stargaze/alloc/v1beta1/params";
+    option (google.api.http).get = "/mun/alloc/v1beta1/params";
   }
 }
 

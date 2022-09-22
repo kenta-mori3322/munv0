@@ -1,10 +1,10 @@
 syntax = "proto3";
-package publicawesome.stargaze.claim.v1beta1;
+package mun.claim.v1beta1;
 
 import "gogoproto/gogo.proto";
 import "google/protobuf/duration.proto";
 import "google/protobuf/timestamp.proto";
-import "stargaze/claim/v1beta1/claim_record.proto";
+import "claim/v1beta1/claim_record.proto";
 
 option go_package = "mun/x/claim/types";
 

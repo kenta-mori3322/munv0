@@ -233,10 +233,10 @@ func (m *MsgFundFairburnPoolResponse) XXX_DiscardUnknown() {
 var xxx_messageInfo_MsgFundFairburnPoolResponse proto.InternalMessageInfo
 
 func init() {
-	proto.RegisterType((*MsgCreateVestingAccount)(nil), "publicawesome.stargaze.alloc.v1beta1.MsgCreateVestingAccount")
-	proto.RegisterType((*MsgCreateVestingAccountResponse)(nil), "publicawesome.stargaze.alloc.v1beta1.MsgCreateVestingAccountResponse")
-	proto.RegisterType((*MsgFundFairburnPool)(nil), "publicawesome.stargaze.alloc.v1beta1.MsgFundFairburnPool")
-	proto.RegisterType((*MsgFundFairburnPoolResponse)(nil), "publicawesome.stargaze.alloc.v1beta1.MsgFundFairburnPoolResponse")
+	proto.RegisterType((*MsgCreateVestingAccount)(nil), "mun.alloc.v1beta1.MsgCreateVestingAccount")
+	proto.RegisterType((*MsgCreateVestingAccountResponse)(nil), "mun.alloc.v1beta1.MsgCreateVestingAccountResponse")
+	proto.RegisterType((*MsgFundFairburnPool)(nil), "mun.alloc.v1beta1.MsgFundFairburnPool")
+	proto.RegisterType((*MsgFundFairburnPoolResponse)(nil), "mun.alloc.v1beta1.MsgFundFairburnPoolResponse")
 }
 
 func init() { proto.RegisterFile("stargaze/alloc/v1beta1/tx.proto", fileDescriptor_8d14330d7694f253) }
@@ -354,7 +354,7 @@ func NewMsgClient(cc grpc1.ClientConn) MsgClient {
 
 func (c *msgClient) CreateVestingAccount(ctx context.Context, in *MsgCreateVestingAccount, opts ...grpc.CallOption) (*MsgCreateVestingAccountResponse, error) {
 	out := new(MsgCreateVestingAccountResponse)
-	err := c.cc.Invoke(ctx, "/publicawesome.stargaze.alloc.v1beta1.Msg/CreateVestingAccount", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/mun.alloc.v1beta1.Msg/CreateVestingAccount", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -363,7 +363,7 @@ func (c *msgClient) CreateVestingAccount(ctx context.Context, in *MsgCreateVesti
 
 func (c *msgClient) FundFairburnPool(ctx context.Context, in *MsgFundFairburnPool, opts ...grpc.CallOption) (*MsgFundFairburnPoolResponse, error) {
 	out := new(MsgFundFairburnPoolResponse)
-	err := c.cc.Invoke(ctx, "/publicawesome.stargaze.alloc.v1beta1.Msg/FundFairburnPool", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/mun.alloc.v1beta1.Msg/FundFairburnPool", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -405,7 +405,7 @@ func _Msg_CreateVestingAccount_Handler(srv interface{}, ctx context.Context, dec
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/publicawesome.stargaze.alloc.v1beta1.Msg/CreateVestingAccount",
+		FullMethod: "/mun.alloc.v1beta1.Msg/CreateVestingAccount",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MsgServer).CreateVestingAccount(ctx, req.(*MsgCreateVestingAccount))
@@ -423,7 +423,7 @@ func _Msg_FundFairburnPool_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/publicawesome.stargaze.alloc.v1beta1.Msg/FundFairburnPool",
+		FullMethod: "/mun.alloc.v1beta1.Msg/FundFairburnPool",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MsgServer).FundFairburnPool(ctx, req.(*MsgFundFairburnPool))
@@ -432,7 +432,7 @@ func _Msg_FundFairburnPool_Handler(srv interface{}, ctx context.Context, dec fun
 }
 
 var _Msg_serviceDesc = grpc.ServiceDesc{
-	ServiceName: "publicawesome.stargaze.alloc.v1beta1.Msg",
+	ServiceName: "mun.alloc.v1beta1.Msg",
 	HandlerType: (*MsgServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{

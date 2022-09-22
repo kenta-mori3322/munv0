@@ -70,7 +70,7 @@ func (m *GenesisState) GetParams() Params {
 }
 
 func init() {
-	proto.RegisterType((*GenesisState)(nil), "publicawesome.stargaze.alloc.v1beta1.GenesisState")
+	proto.RegisterType((*GenesisState)(nil), "mun.alloc.v1beta1.GenesisState")
 }
 
 func init() {

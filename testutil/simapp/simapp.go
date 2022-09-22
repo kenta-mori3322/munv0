@@ -12,8 +12,8 @@ import (
 	"github.com/cosmos/cosmos-sdk/simapp"
 	"github.com/cosmos/cosmos-sdk/simapp/helpers"
 	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/ignite/cli/ignite/pkg/cosmoscmd"
 	"github.com/stretchr/testify/require"
-	"github.com/tendermint/spm/cosmoscmd"
 	abci "github.com/tendermint/tendermint/abci/types"
 	"github.com/tendermint/tendermint/libs/log"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
@@ -26,20 +26,20 @@ import (
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
 
-	stargazeapp "github.com/public-awesome/stargaze/v7/app"
+	munapp "mun/app"
 )
 
 // New creates application instance with in-memory database and disabled logging.
-func New(dir string) *stargazeapp.App {
+func New(dir string) *munapp.App {
 	db := tmdb.NewMemDB()
 	logger := log.NewNopLogger()
 
-	encoding := cosmoscmd.MakeEncodingConfig(stargazeapp.ModuleBasics)
+	encoding := cosmoscmd.MakeEncodingConfig(munapp.ModuleBasics)
 
-	a := stargazeapp.NewStargazeApp(logger, db, nil, true, map[int64]bool{}, dir, 0, encoding,
-		simapp.EmptyAppOptions{}, stargazeapp.EmptyWasmOpts, stargazeapp.GetEnabledProposals())
+	a := munapp.New(logger, db, nil, true, map[int64]bool{}, dir, 0, encoding,
+		simapp.EmptyAppOptions{})
 
-	stateBytes, err := json.MarshalIndent(stargazeapp.ModuleBasics.DefaultGenesis(encoding.Marshaler), "", " ")
+	stateBytes, err := json.MarshalIndent(munapp.ModuleBasics.DefaultGenesis(encoding.Marshaler), "", " ")
 	if err != nil {
 		panic(err)
 	}
@@ -48,7 +48,7 @@ func New(dir string) *stargazeapp.App {
 		ConsensusParams: defaultConsensusParams,
 		AppStateBytes:   stateBytes,
 	})
-	return a.(*stargazeapp.App)
+	return a.(*munapp.App)
 }
 
 var defaultConsensusParams = &abci.ConsensusParams{
@@ -68,22 +68,24 @@ var defaultConsensusParams = &abci.ConsensusParams{
 	},
 }
 
-func setup(withGenesis bool, invCheckPeriod uint, dir string) (*stargazeapp.App, stargazeapp.GenesisState) {
+func setup(withGenesis bool, invCheckPeriod uint, dir string) (*munapp.App, munapp.GenesisState) {
 	db := tmdb.NewMemDB()
-	encoding := cosmoscmd.MakeEncodingConfig(stargazeapp.ModuleBasics)
-	a := stargazeapp.NewStargazeApp(log.NewNopLogger(), db, nil, true,
-		map[int64]bool{}, dir, invCheckPeriod, encoding, simapp.EmptyAppOptions{}, stargazeapp.EmptyWasmOpts, stargazeapp.GetEnabledProposals())
+	encoding := cosmoscmd.MakeEncodingConfig(munapp.ModuleBasics)
+
+	a := munapp.New(log.NewNopLogger(), db, nil, true,
+		map[int64]bool{}, dir, invCheckPeriod, encoding, simapp.EmptyAppOptions{})
+
 	if withGenesis {
-		return a.(*stargazeapp.App), stargazeapp.NewDefaultGenesisState(encoding.Marshaler)
+		return a.(*munapp.App), munapp.NewDefaultGenesisState(encoding.Marshaler)
 	}
-	return a.(*stargazeapp.App), stargazeapp.GenesisState{}
+	return a.(*munapp.App), munapp.GenesisState{}
 }
 
 // SetupWithGenesisValSet initializes a new SimApp with a validator set and genesis accounts
 // that also act as delegators. For simplicity, each validator is bonded with a delegation
 // of one consensus engine unit in the default token of the simapp from first genesis
 // account. A Nop logger is set in SimApp.
-func SetupWithGenesisValSet(t *testing.T, dir string, valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount, balances ...banktypes.Balance) *stargazeapp.App {
+func SetupWithGenesisValSet(t *testing.T, dir string, valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount, balances ...banktypes.Balance) *munapp.App {
 	t.Helper()
 
 	app, genesisState := setup(true, 5, dir)
@@ -115,7 +117,7 @@ func SetupWithGenesisValSet(t *testing.T, dir string, valSet *tmtypes.ValidatorS
 
 // SetupWithGenesisAccounts initializes a new SimApp with the provided genesis
 // accounts and possible balances.
-func SetupWithGenesisAccounts(t *testing.T, dir string, genAccs []authtypes.GenesisAccount, balances ...banktypes.Balance) *stargazeapp.App {
+func SetupWithGenesisAccounts(t *testing.T, dir string, genAccs []authtypes.GenesisAccount, balances ...banktypes.Balance) *munapp.App {
 	t.Helper()
 
 	privVal := NewPV()
@@ -130,10 +132,10 @@ func SetupWithGenesisAccounts(t *testing.T, dir string, genAccs []authtypes.Gene
 }
 
 func genesisStateWithValSet(t *testing.T,
-	app *stargazeapp.App, genesisState stargazeapp.GenesisState,
+	app *munapp.App, genesisState munapp.GenesisState,
 	valSet *tmtypes.ValidatorSet, genAccs []authtypes.GenesisAccount,
 	balances ...banktypes.Balance,
-) stargazeapp.GenesisState {
+) munapp.GenesisState {
 	// set genesis accounts
 	authGenesis := authtypes.NewGenesisState(authtypes.DefaultParams(), genAccs)
 	genesisState[authtypes.ModuleName] = app.AppCodec().MustMarshalJSON(authGenesis)

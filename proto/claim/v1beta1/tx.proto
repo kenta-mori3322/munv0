@@ -1,9 +1,9 @@
 syntax = "proto3";
-package publicawesome.stargaze.claim.v1beta1;
+package mun.claim.v1beta1;
 
 import "gogoproto/gogo.proto";
 import "cosmos/base/v1beta1/coin.proto";
-import "stargaze/claim/v1beta1/claim_record.proto";
+import "claim/v1beta1/claim_record.proto";
 
 // this line is used by starport scaffolding # proto/tx/import
 

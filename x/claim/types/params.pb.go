@@ -30,7 +30,7 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type ClaimAuthorization struct {
 	ContractAddress string `protobuf:"bytes,1,opt,name=contract_address,json=contractAddress,proto3" json:"contract_address,omitempty" yaml:"contract_address"`
-	Action          Action `protobuf:"varint,2,opt,name=action,proto3,enum=publicawesome.stargaze.claim.v1beta1.Action" json:"action,omitempty" yaml:"action"`
+	Action          Action `protobuf:"varint,2,opt,name=action,proto3,enum=mun.claim.v1beta1.Action" json:"action,omitempty" yaml:"action"`
 }
 
 func (m *ClaimAuthorization) Reset()         { *m = ClaimAuthorization{} }
@@ -167,8 +167,8 @@ func (m *Params) GetAllowedClaimers() []ClaimAuthorization {
 }
 
 func init() {
-	proto.RegisterType((*ClaimAuthorization)(nil), "publicawesome.stargaze.claim.v1beta1.ClaimAuthorization")
-	proto.RegisterType((*Params)(nil), "publicawesome.stargaze.claim.v1beta1.Params")
+	proto.RegisterType((*ClaimAuthorization)(nil), "mun.claim.v1beta1.ClaimAuthorization")
+	proto.RegisterType((*Params)(nil), "mun.claim.v1beta1.Params")
 }
 
 func init() {
