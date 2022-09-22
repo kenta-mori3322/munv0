@@ -161,7 +161,7 @@ func GetWasmOpts(appOpts servertypes.AppOptions) []wasm.Option {
 		wasmOpts = append(wasmOpts, wasmkeeper.WithVMCacheMetrics(prometheus.DefaultRegisterer))
 	}
 
-	wasmOpts = append(wasmOpts, wasmkeeper.WithGasRegister(NewJunoWasmGasRegister()))
+	wasmOpts = append(wasmOpts, wasmkeeper.WithGasRegister(NewMunWasmGasRegister()))
 
 	return wasmOpts
 }
