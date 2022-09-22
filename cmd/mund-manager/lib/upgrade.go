@@ -4,16 +4,65 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"io"
 	"io/ioutil"
+	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
 	"runtime"
 	"strings"
 
-	"github.com/hashicorp/go-getter"
 	"github.com/otiai10/copy"
 )
+
+// Download single binary from URL
+func DownloadSingleFileFromURL(dstPath string, srcURL string) error {
+	// Build fileName from fullPath
+	fileURL, err := url.Parse(srcURL)
+	if err != nil {
+		return err
+	}
+
+	path := fileURL.Path
+	segments := strings.Split(path, "/")
+	fileName := segments[len(segments)-1]
+	filePath := filepath.Join(dstPath, fileName)
+
+	// if file exists
+	if _, err := os.Stat(filePath); err == nil {
+		os.Remove(filePath)
+	}
+
+	// Create blank file
+	file, err := os.Create(filePath)
+	if err != nil {
+		return err
+	}
+
+	defer file.Close()
+
+	client := http.Client{
+		CheckRedirect: func(r *http.Request, via []*http.Request) error {
+			r.URL.Opaque = r.URL.Path
+			return nil
+		},
+	}
+
+	// Put content on file
+	resp, err := client.Get(srcURL)
+	if err != nil {
+		return err
+	}
+	defer resp.Body.Close()
+
+	_, err = io.Copy(file, resp.Body)
+	if err != nil {
+		return nil
+	}
+
+	return nil
+}
 
 // DoUpgrade will be called after the log message has been parsed and the process has terminated.
 // We can now make any changes to the underlying directory without interference and leave it
@@ -57,12 +106,12 @@ func DownloadBinary(cfg *Config, info *UpgradeInfo) error {
 
 	// download into the bin dir (works for one file)
 	binPath := cfg.UpgradeBin(info.Name)
-	err = getter.GetFile(binPath, url)
+	err = DownloadSingleFileFromURL(binPath, url)
 
 	// if this fails, let's see if it is a zipped directory
 	if err != nil {
 		dirPath := cfg.UpgradeDir(info.Name)
-		err = getter.Get(dirPath, url)
+		err = DownloadSingleFileFromURL(dirPath, url)
 		if err != nil {
 			return err
 		}
@@ -113,7 +162,7 @@ func GetDownloadURL(info *UpgradeInfo) (string, error) {
 		defer os.RemoveAll(tmpDir)
 
 		refPath := filepath.Join(tmpDir, "ref")
-		if err := getter.GetFile(refPath, doc); err != nil {
+		if err := DownloadSingleFileFromURL(refPath, doc); err != nil {
 			return "", fmt.Errorf("downloading reference link %s: %w", doc, err)
 		}
 
