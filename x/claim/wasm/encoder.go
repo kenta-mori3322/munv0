@@ -4,10 +4,11 @@ import (
 	"encoding/json"
 	"fmt"
 
+	sgwasm "mun/internal/wasm"
+	claimtypes "mun/x/claim/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	sgwasm "github.com/public-awesome/stargaze/v7/internal/wasm"
-	claimtypes "github.com/public-awesome/stargaze/v7/x/claim/types"
 )
 
 var _ sgwasm.Encoder = Encoder

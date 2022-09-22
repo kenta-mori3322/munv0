@@ -1,8 +1,9 @@
 package simulation
 
 import (
+	"mun/x/claim/types"
+
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/public-awesome/stargaze/v7/x/claim/types"
 )
 
 // RandomizedGenState generates a random GenesisState  for claim

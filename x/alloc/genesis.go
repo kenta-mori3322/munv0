@@ -1,9 +1,10 @@
 package alloc
 
 import (
+	"mun/x/alloc/keeper"
+	"mun/x/alloc/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v7/x/alloc/keeper"
-	"github.com/public-awesome/stargaze/v7/x/alloc/types"
 )
 
 // InitGenesis initializes the alloc module's state from a provided genesis

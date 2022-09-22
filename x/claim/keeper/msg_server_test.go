@@ -5,10 +5,11 @@ import (
 	"testing"
 	"time"
 
+	"mun/testutil/simapp"
+	"mun/x/claim/keeper"
+	"mun/x/claim/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v7/testutil/simapp"
-	"github.com/public-awesome/stargaze/v7/x/claim/keeper"
-	"github.com/public-awesome/stargaze/v7/x/claim/types"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 )
 

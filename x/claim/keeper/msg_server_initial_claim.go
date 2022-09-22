@@ -3,8 +3,9 @@ package keeper
 import (
 	"context"
 
+	"mun/x/claim/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v7/x/claim/types"
 )
 
 func (k msgServer) InitialClaim(goCtx context.Context, msg *types.MsgInitialClaim) (*types.MsgInitialClaimResponse, error) {

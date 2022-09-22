@@ -3,8 +3,9 @@ package types
 import (
 	"testing"
 
+	"mun/testutil/sample"
+
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/public-awesome/stargaze/v7/testutil/sample"
 	"github.com/stretchr/testify/require"
 )
 

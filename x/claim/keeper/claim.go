@@ -1,11 +1,12 @@
 package keeper
 
 import (
+	"mun/x/claim/types"
+
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	"github.com/gogo/protobuf/proto"
-	"github.com/public-awesome/stargaze/v7/x/claim/types"
 )
 
 // CreateModuleAccount creates module account of airdrop module

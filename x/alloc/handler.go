@@ -3,10 +3,11 @@ package alloc
 import (
 	"fmt"
 
+	"mun/x/alloc/keeper"
+	"mun/x/alloc/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/public-awesome/stargaze/v7/x/alloc/keeper"
-	"github.com/public-awesome/stargaze/v7/x/alloc/types"
 )
 
 // NewHandler ...

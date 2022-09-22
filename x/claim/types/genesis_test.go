@@ -4,8 +4,9 @@ import (
 	"testing"
 	"time"
 
+	"mun/x/claim/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v7/x/claim/types"
 	"github.com/stretchr/testify/require"
 )
 

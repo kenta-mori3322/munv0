@@ -3,10 +3,11 @@ package claim
 import (
 	"fmt"
 
+	"mun/x/claim/keeper"
+	"mun/x/claim/types"
+
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	"github.com/public-awesome/stargaze/v7/x/claim/keeper"
-	"github.com/public-awesome/stargaze/v7/x/claim/types"
 )
 
 // NewHandler ...

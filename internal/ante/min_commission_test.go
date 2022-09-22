@@ -4,6 +4,9 @@ import (
 	"testing"
 	"time"
 
+	stargazeapp "mun/app"
+	"mun/testutil/simapp"
+
 	"github.com/cosmos/cosmos-sdk/crypto/keys/ed25519"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
@@ -12,8 +15,6 @@ import (
 	"github.com/cosmos/cosmos-sdk/x/authz"
 	banktypes "github.com/cosmos/cosmos-sdk/x/bank/types"
 	"github.com/cosmos/cosmos-sdk/x/staking/types"
-	stargazeapp "github.com/public-awesome/stargaze/v7/app"
-	"github.com/public-awesome/stargaze/v7/testutil/simapp"
 	"github.com/stretchr/testify/require"
 	"github.com/tendermint/spm/cosmoscmd"
 

@@ -5,16 +5,17 @@ import (
 	"testing"
 	"time"
 
+	"mun/app"
+	"mun/testutil/simapp"
+	"mun/x/claim/keeper"
+	"mun/x/claim/types"
+
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	bankkeeper "github.com/cosmos/cosmos-sdk/x/bank/keeper"
 	minttypes "github.com/cosmos/cosmos-sdk/x/mint/types"
-	"github.com/public-awesome/stargaze/v7/app"
-	"github.com/public-awesome/stargaze/v7/testutil/simapp"
-	"github.com/public-awesome/stargaze/v7/x/claim/keeper"
-	"github.com/public-awesome/stargaze/v7/x/claim/types"
 	"github.com/stretchr/testify/suite"
 	tmproto "github.com/tendermint/tendermint/proto/tendermint/types"
 )

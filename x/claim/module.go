@@ -13,14 +13,15 @@ import (
 
 	abci "github.com/tendermint/tendermint/abci/types"
 
+	"mun/x/claim/client/cli"
+	"mun/x/claim/keeper"
+	"mun/x/claim/types"
+
 	"github.com/cosmos/cosmos-sdk/client"
 	"github.com/cosmos/cosmos-sdk/codec"
 	cdctypes "github.com/cosmos/cosmos-sdk/codec/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/module"
-	"github.com/public-awesome/stargaze/v7/x/claim/client/cli"
-	"github.com/public-awesome/stargaze/v7/x/claim/keeper"
-	"github.com/public-awesome/stargaze/v7/x/claim/types"
 )
 
 var (

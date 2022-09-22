@@ -4,12 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 
+	sgwasm "mun/internal/wasm"
+	"mun/x/alloc/types"
+
 	wasmkeeper "github.com/CosmWasm/wasmd/x/wasm/keeper"
 	wasmvmtypes "github.com/CosmWasm/wasmvm/types"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	sdkerrors "github.com/cosmos/cosmos-sdk/types/errors"
-	sgwasm "github.com/public-awesome/stargaze/v7/internal/wasm"
-	"github.com/public-awesome/stargaze/v7/x/alloc/types"
 )
 
 var _ sgwasm.Encoder = Encoder

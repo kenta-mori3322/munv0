@@ -4,10 +4,11 @@ import (
 	"fmt"
 	"time"
 
+	"mun/x/alloc/keeper"
+	"mun/x/alloc/types"
+
 	"github.com/cosmos/cosmos-sdk/telemetry"
 	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/public-awesome/stargaze/v7/x/alloc/keeper"
-	"github.com/public-awesome/stargaze/v7/x/alloc/types"
 )
 
 // BeginBlocker to distribute specific rewards on every begin block

@@ -3,12 +3,13 @@ package keeper_test
 import (
 	"time"
 
+	"mun/x/claim/types"
+
 	"github.com/cosmos/cosmos-sdk/crypto/keys/secp256k1"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	authtypes "github.com/cosmos/cosmos-sdk/x/auth/types"
 	stakingkeeper "github.com/cosmos/cosmos-sdk/x/staking/keeper"
 	stakingtypes "github.com/cosmos/cosmos-sdk/x/staking/types"
-	"github.com/public-awesome/stargaze/v7/x/claim/types"
 )
 
 func (suite *KeeperTestSuite) TestHookOfUnclaimableAccount() {
