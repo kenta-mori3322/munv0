@@ -84,7 +84,7 @@ func (s *KeeperTestSuite) TestClaimFor() {
 	})
 	err := s.app.ClaimKeeper.SetClaimRecords(s.ctx, claimRecords)
 	s.Require().NoError(err)
-	msgClaimFor := types.NewMsgClaimFor(contractAddress1.String(), addr1.String(), types.ActionBidNFT)
+	msgClaimFor := types.NewMsgClaimFor(contractAddress1.String(), addr1.String(), types.ActionDelegateStake)
 	ctx := sdk.WrapSDKContext(s.ctx)
 	_, err = s.msgSrvr.ClaimFor(ctx, msgClaimFor)
 	s.Error(err)
@@ -98,30 +98,30 @@ func (s *KeeperTestSuite) TestClaimFor() {
 		AllowedClaimers: []types.ClaimAuthorization{
 			{
 				ContractAddress: contractAddress1.String(),
-				Action:          types.ActionBidNFT,
+				Action:          types.ActionSwap,
 			},
 			{
 				ContractAddress: contractAddress2.String(),
-				Action:          types.ActionMintNFT,
+				Action:          types.ActionDelegateStake,
 			},
 		},
 	})
 
 	// unauthorized
-	msgClaimFor = types.NewMsgClaimFor(wasmkeeper.BuildContractAddress(2, 1).String(), addr1.String(), types.ActionMintNFT)
+	msgClaimFor = types.NewMsgClaimFor(wasmkeeper.BuildContractAddress(2, 1).String(), addr1.String(), types.ActionSwap)
 	_, err = s.msgSrvr.ClaimFor(ctx, msgClaimFor)
 	s.Require().Error(err)
 	s.Contains(err.Error(), "address is not allowed to claim")
 
 	// unauthorized to claim another action
 
-	msgClaimFor = types.NewMsgClaimFor(contractAddress1.String(), addr1.String(), types.ActionMintNFT)
+	msgClaimFor = types.NewMsgClaimFor(contractAddress1.String(), addr1.String(), types.ActionDelegateStake)
 	_, err = s.msgSrvr.ClaimFor(ctx, msgClaimFor)
 	s.Require().Error(err)
 	s.Contains(err.Error(), "address is not allowed to claim")
 
 	// claim
-	msgClaimFor = types.NewMsgClaimFor(contractAddress1.String(), addr1.String(), types.ActionBidNFT)
+	msgClaimFor = types.NewMsgClaimFor(contractAddress1.String(), addr1.String(), types.ActionDelegateStake)
 	_, err = s.msgSrvr.ClaimFor(ctx, msgClaimFor)
 	s.Require().NoError(err)
 
@@ -134,7 +134,7 @@ func (s *KeeperTestSuite) TestClaimFor() {
 	s.Require().Equal([]bool{false, true, false, false, false}, record.ActionCompleted)
 
 	// claim 2
-	msgClaimFor = types.NewMsgClaimFor(contractAddress2.String(), addr1.String(), types.ActionMintNFT)
+	msgClaimFor = types.NewMsgClaimFor(contractAddress2.String(), addr1.String(), types.ActionSwap)
 	_, err = s.msgSrvr.ClaimFor(ctx, msgClaimFor)
 	s.Require().NoError(err)
 
@@ -151,7 +151,7 @@ func (s *KeeperTestSuite) TestClaimFor() {
 	s.Require().Equal([]bool{false, true, true, false, false}, record.ActionCompleted)
 
 	// claim second address
-	msgClaimFor = types.NewMsgClaimFor(contractAddress2.String(), addr2.String(), types.ActionMintNFT)
+	msgClaimFor = types.NewMsgClaimFor(contractAddress2.String(), addr2.String(), types.ActionSwap)
 	_, err = s.msgSrvr.ClaimFor(ctx, msgClaimFor)
 	s.Require().NoError(err)
 

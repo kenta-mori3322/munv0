@@ -29,26 +29,23 @@ type Action int32
 
 const (
 	ActionInitialClaim  Action = 0
-	ActionBidNFT        Action = 1
-	ActionMintNFT       Action = 2
+	ActionSwap        	Action = 1
+	ActionDelegateStake Action = 2
 	ActionVote          Action = 3
-	ActionDelegateStake Action = 4
 )
 
 var Action_name = map[int32]string{
 	0: "ActionInitialClaim",
-	1: "ActionBidNFT",
-	2: "ActionMintNFT",
+	1: "ActionSwap",
+	2: "ActionDelegateStake",
 	3: "ActionVote",
-	4: "ActionDelegateStake",
 }
 
 var Action_value = map[string]int32{
 	"ActionInitialClaim":  0,
-	"ActionBidNFT":        1,
-	"ActionMintNFT":       2,
-	"ActionVote":          3,
-	"ActionDelegateStake": 4,
+	"ActionSwap": 1,
+	"ActionDelegateStake": 2,
+	"ActionVote": 3,
 }
 
 func (x Action) String() string {

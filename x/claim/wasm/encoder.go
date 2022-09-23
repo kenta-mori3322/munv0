@@ -26,14 +26,14 @@ type ClaimFor struct {
 }
 
 func (a ClaimAction) ToAction() (claimtypes.Action, error) {
-	if a == ClaimActionMintNFT {
-		return claimtypes.ActionMintNFT, nil
-	}
+	// if a == ClaimActionMintNFT {
+	// 	return claimtypes.ActionMintNFT, nil
+	// }
 
-	// rebranding the action
-	if a == ClaimActionBidNFT {
-		return claimtypes.ActionBidNFT, nil
-	}
+	// // rebranding the action
+	// if a == ClaimActionBidNFT {
+	// 	return claimtypes.ActionBidNFT, nil
+	// }
 
 	return 0, fmt.Errorf("invalid action")
 }
