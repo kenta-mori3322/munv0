@@ -21,6 +21,8 @@ const (
 
 	// ActionKey defines the store key to store user accomplished actions
 	ActionKey = "action"
+
+	InitialClaimAmount = "250000000utmun"
 )
 
 // KVStore keys

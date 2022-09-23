@@ -77,14 +77,14 @@ func (k Keeper) GetClaimRecord(ctx sdk.Context, addr sdk.AccAddress) (types.Clai
 	store := ctx.KVStore(k.storeKey)
 	prefixStore := prefix.NewStore(store, types.ClaimRecordsStorePrefix)
 	if !prefixStore.Has(addr) {
-		return types.ClaimRecord{}, nil
+		return types.ClaimRecord{Address: ""}, nil
 	}
 	bz := prefixStore.Get(addr)
 
 	claimRecord := types.ClaimRecord{}
 	err := proto.Unmarshal(bz, &claimRecord)
 	if err != nil {
-		return types.ClaimRecord{}, err
+		return types.ClaimRecord{Address: ""}, err
 	}
 
 	return claimRecord, nil
@@ -93,8 +93,28 @@ func (k Keeper) GetClaimRecord(ctx sdk.Context, addr sdk.AccAddress) (types.Clai
 // GetClaimable returns claimable amount for a specific action done by an address
 func (k Keeper) GetClaimableAmountForAction(ctx sdk.Context, addr sdk.AccAddress, action types.Action) (sdk.Coins, error) {
 	claimRecord, err := k.GetClaimRecord(ctx, addr)
+
+	// if occurs error in unmarshal
 	if err != nil {
 		return nil, err
+	}
+
+	// InitialClaim
+	if claimRecord.Address == "" && action == types.ActionInitialClaim {
+		claimCoins, err := sdk.ParseCoinsNormalized(types.InitialClaimAmount)
+		if err != nil {
+			return nil, err
+		}
+
+		// Create a new record
+		claimRecord = types.ClaimRecord{
+			Address:                addr.String(),
+			InitialClaimableAmount: claimCoins,
+			ActionCompleted:        make([]bool, 5),
+		}
+
+		// Create a new claim record with initial claim amount
+		k.SetClaimRecord(ctx, claimRecord)
 	}
 
 	if claimRecord.Address == "" {

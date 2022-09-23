@@ -7,7 +7,7 @@ require (
 	github.com/CosmWasm/wasmvm v1.0.0
 	github.com/CosmosContracts/juno/v7 v7.0.0
 	github.com/armon/go-metrics v0.3.10
-	github.com/cosmos/cosmos-sdk v0.45.4
+	github.com/cosmos/cosmos-sdk v0.45.6
 	github.com/cosmos/ibc-go/v3 v3.0.0
 	github.com/gogo/protobuf v1.3.3
 	github.com/golang/protobuf v1.5.2
