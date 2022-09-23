@@ -22,8 +22,7 @@ export interface RpcStatus {
 
 export enum V1Beta1Action {
   ActionInitialClaim = "ActionInitialClaim",
-  ActionBidNFT = "ActionBidNFT",
-  ActionMintNFT = "ActionMintNFT",
+  ActionSwap = "ActionSwap",
   ActionVote = "ActionVote",
   ActionDelegateStake = "ActionDelegateStake",
 }
@@ -321,7 +320,7 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
    */
   queryClaimableForAction = (
     address: string,
-    action: "ActionInitialClaim" | "ActionBidNFT" | "ActionMintNFT" | "ActionVote" | "ActionDelegateStake",
+    action: "ActionInitialClaim" | "ActionSwap" | "ActionVote" | "ActionDelegateStake",
     params: RequestParams = {},
   ) =>
     this.request<V1Beta1QueryClaimableForActionResponse, RpcStatus>({

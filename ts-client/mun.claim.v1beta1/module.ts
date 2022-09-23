@@ -7,17 +7,11 @@ import { msgTypes } from './registry';
 import { IgniteClient } from "../client"
 import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
-import { MsgClaimFor } from "./types/claim/v1beta1/tx";
 import { MsgInitialClaim } from "./types/claim/v1beta1/tx";
+import { MsgClaimFor } from "./types/claim/v1beta1/tx";
 
 
-export { MsgClaimFor, MsgInitialClaim };
-
-type sendMsgClaimForParams = {
-  value: MsgClaimFor,
-  fee?: StdFee,
-  memo?: string
-};
+export { MsgInitialClaim, MsgClaimFor };
 
 type sendMsgInitialClaimParams = {
   value: MsgInitialClaim,
@@ -25,13 +19,19 @@ type sendMsgInitialClaimParams = {
   memo?: string
 };
 
-
-type msgClaimForParams = {
+type sendMsgClaimForParams = {
   value: MsgClaimFor,
+  fee?: StdFee,
+  memo?: string
 };
+
 
 type msgInitialClaimParams = {
   value: MsgInitialClaim,
+};
+
+type msgClaimForParams = {
+  value: MsgClaimFor,
 };
 
 
@@ -52,20 +52,6 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 
   return {
 		
-		async sendMsgClaimFor({ value, fee, memo }: sendMsgClaimForParams): Promise<DeliverTxResponse> {
-			if (!signer) {
-					throw new Error('TxClient:sendMsgClaimFor: Unable to sign Tx. Signer is not present.')
-			}
-			try {			
-				const { address } = (await signer.getAccounts())[0]; 
-				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
-				let msg = this.msgClaimFor({ value: MsgClaimFor.fromPartial(value) })
-				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
-			} catch (e: any) {
-				throw new Error('TxClient:sendMsgClaimFor: Could not broadcast Tx: '+ e.message)
-			}
-		},
-		
 		async sendMsgInitialClaim({ value, fee, memo }: sendMsgInitialClaimParams): Promise<DeliverTxResponse> {
 			if (!signer) {
 					throw new Error('TxClient:sendMsgInitialClaim: Unable to sign Tx. Signer is not present.')
@@ -80,20 +66,34 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 			}
 		},
 		
-		
-		msgClaimFor({ value }: msgClaimForParams): EncodeObject {
-			try {
-				return { typeUrl: "/mun.claim.v1beta1.MsgClaimFor", value: MsgClaimFor.fromPartial( value ) }  
+		async sendMsgClaimFor({ value, fee, memo }: sendMsgClaimForParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgClaimFor: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgClaimFor({ value: MsgClaimFor.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
 			} catch (e: any) {
-				throw new Error('TxClient:MsgClaimFor: Could not create message: ' + e.message)
+				throw new Error('TxClient:sendMsgClaimFor: Could not broadcast Tx: '+ e.message)
 			}
 		},
+		
 		
 		msgInitialClaim({ value }: msgInitialClaimParams): EncodeObject {
 			try {
 				return { typeUrl: "/mun.claim.v1beta1.MsgInitialClaim", value: MsgInitialClaim.fromPartial( value ) }  
 			} catch (e: any) {
 				throw new Error('TxClient:MsgInitialClaim: Could not create message: ' + e.message)
+			}
+		},
+		
+		msgClaimFor({ value }: msgClaimForParams): EncodeObject {
+			try {
+				return { typeUrl: "/mun.claim.v1beta1.MsgClaimFor", value: MsgClaimFor.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgClaimFor: Could not create message: ' + e.message)
 			}
 		},
 		

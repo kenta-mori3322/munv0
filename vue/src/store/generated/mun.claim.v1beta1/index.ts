@@ -248,19 +248,6 @@ export default {
 		},
 		
 		
-		async sendMsgClaimFor({ rootGetters }, { value, fee = [], memo = '' }) {
-			try {
-				const client=await initClient(rootGetters)
-				const result = await client.MunClaimV1Beta1.tx.sendMsgClaimFor({ value, fee: {amount: fee, gas: "200000"}, memo })
-				return result
-			} catch (e) {
-				if (e == MissingWalletError) {
-					throw new Error('TxClient:MsgClaimFor:Init Could not initialize signing client. Wallet is required.')
-				}else{
-					throw new Error('TxClient:MsgClaimFor:Send Could not broadcast Tx: '+ e.message)
-				}
-			}
-		},
 		async sendMsgInitialClaim({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
 				const client=await initClient(rootGetters)
@@ -274,20 +261,20 @@ export default {
 				}
 			}
 		},
-		
-		async MsgClaimFor({ rootGetters }, { value }) {
+		async sendMsgClaimFor({ rootGetters }, { value, fee = [], memo = '' }) {
 			try {
-				const client=initClient(rootGetters)
-				const msg = await client.MunClaimV1Beta1.tx.msgClaimFor({value})
-				return msg
+				const client=await initClient(rootGetters)
+				const result = await client.MunClaimV1Beta1.tx.sendMsgClaimFor({ value, fee: {amount: fee, gas: "200000"}, memo })
+				return result
 			} catch (e) {
 				if (e == MissingWalletError) {
 					throw new Error('TxClient:MsgClaimFor:Init Could not initialize signing client. Wallet is required.')
-				} else{
-					throw new Error('TxClient:MsgClaimFor:Create Could not create message: ' + e.message)
+				}else{
+					throw new Error('TxClient:MsgClaimFor:Send Could not broadcast Tx: '+ e.message)
 				}
 			}
 		},
+		
 		async MsgInitialClaim({ rootGetters }, { value }) {
 			try {
 				const client=initClient(rootGetters)
@@ -298,6 +285,19 @@ export default {
 					throw new Error('TxClient:MsgInitialClaim:Init Could not initialize signing client. Wallet is required.')
 				} else{
 					throw new Error('TxClient:MsgInitialClaim:Create Could not create message: ' + e.message)
+				}
+			}
+		},
+		async MsgClaimFor({ rootGetters }, { value }) {
+			try {
+				const client=initClient(rootGetters)
+				const msg = await client.MunClaimV1Beta1.tx.msgClaimFor({value})
+				return msg
+			} catch (e) {
+				if (e == MissingWalletError) {
+					throw new Error('TxClient:MsgClaimFor:Init Could not initialize signing client. Wallet is required.')
+				} else{
+					throw new Error('TxClient:MsgClaimFor:Create Could not create message: ' + e.message)
 				}
 			}
 		},

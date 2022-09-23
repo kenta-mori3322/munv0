@@ -6,10 +6,9 @@ export const protobufPackage = "mun.claim.v1beta1";
 
 export enum Action {
   ActionInitialClaim = 0,
-  ActionBidNFT = 1,
-  ActionMintNFT = 2,
-  ActionVote = 3,
-  ActionDelegateStake = 4,
+  ActionSwap = 1,
+  ActionVote = 2,
+  ActionDelegateStake = 3,
   UNRECOGNIZED = -1,
 }
 
@@ -19,15 +18,12 @@ export function actionFromJSON(object: any): Action {
     case "ActionInitialClaim":
       return Action.ActionInitialClaim;
     case 1:
-    case "ActionBidNFT":
-      return Action.ActionBidNFT;
+    case "ActionSwap":
+      return Action.ActionSwap;
     case 2:
-    case "ActionMintNFT":
-      return Action.ActionMintNFT;
-    case 3:
     case "ActionVote":
       return Action.ActionVote;
-    case 4:
+    case 3:
     case "ActionDelegateStake":
       return Action.ActionDelegateStake;
     case -1:
@@ -41,10 +37,8 @@ export function actionToJSON(object: Action): string {
   switch (object) {
     case Action.ActionInitialClaim:
       return "ActionInitialClaim";
-    case Action.ActionBidNFT:
-      return "ActionBidNFT";
-    case Action.ActionMintNFT:
-      return "ActionMintNFT";
+    case Action.ActionSwap:
+      return "ActionSwap";
     case Action.ActionVote:
       return "ActionVote";
     case Action.ActionDelegateStake:
@@ -76,7 +70,7 @@ export const ClaimRecord = {
     for (const v of message.initialClaimableAmount) {
       Coin.encode(v!, writer.uint32(18).fork()).ldelim();
     }
-    writer.uint32(34).fork();
+    writer.uint32(26).fork();
     for (const v of message.actionCompleted) {
       writer.bool(v);
     }
@@ -101,7 +95,7 @@ export const ClaimRecord = {
             Coin.decode(reader, reader.uint32())
           );
           break;
-        case 4:
+        case 3:
           if ((tag & 7) === 2) {
             const end2 = reader.uint32() + reader.pos;
             while (reader.pos < end2) {
