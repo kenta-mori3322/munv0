@@ -18,7 +18,7 @@
         </div>
       </div>
       <div>
-        <Button class="Button" @click="() => sendTx(1)">
+        <Button class="Button" @click="() => sendTxInitialClaim()">
           Claim
         </Button>
       </div>
@@ -232,8 +232,11 @@ export default defineComponent({
 
     // actions
     let sendMsgSend = (opts: any) =>
-      $s.dispatch('mun.claim/MsgClaim', opts)
+      $s.dispatch('mun.claim.v1beta1/sendMsgInitialClaim', opts)
 
+
+    let sendMsgInitialClaim = (opts: any) =>
+      $s.dispatch('mun.claim.v1beta1/sendMsgInitialClaim', opts)
 
     // methods
     let switchToSend = (): void => {
@@ -252,6 +255,7 @@ export default defineComponent({
 
       state.currentUIState = UI_STATE.SEND
     }
+
     let sendTx = async (x_cond: number): Promise<void> => {
       state.currentUIState = UI_STATE.TX_SIGNING
 
@@ -274,6 +278,31 @@ export default defineComponent({
         if (txResult.code) {
           throw new Error()
         }
+        state.currentUIState = UI_STATE.TX_SUCCESS
+      } catch (e) {
+        console.error(e)
+        state.currentUIState = UI_STATE.TX_ERROR
+      }
+    }
+
+    let sendTxInitialClaim = async (): Promise<void> => {
+      state.currentUIState = UI_STATE.TX_SIGNING
+
+      try {
+        let payload: any = {
+          sender: address.value,
+        }
+
+        let send = () =>
+          sendMsgInitialClaim({
+            value: payload,
+          })
+        const txResult = await send()
+
+        if (txResult.code) {
+          throw new Error()
+        }
+
         state.currentUIState = UI_STATE.TX_SUCCESS
       } catch (e) {
         console.error(e)
@@ -350,6 +379,7 @@ export default defineComponent({
       parseAmount,
       resetTx,
       sendTx,
+      sendTxInitialClaim,
     }
   }
 })
