@@ -104,13 +104,21 @@ import (
 	munmodulekeeper "mun/x/mun/keeper"
 	munmoduletypes "mun/x/mun/types"
 
+	claimmodule "mun/x/claim"
+	claimmodulekeeper "mun/x/claim/keeper"
+	claimmoduletypes "mun/x/claim/types"
+	claimwasm "mun/x/claim/wasm"
+
+	allocmodule "mun/x/alloc"
+	allocmodulekeeper "mun/x/alloc/keeper"
+	allocmoduletypes "mun/x/alloc/types"
+	allocwasm "mun/x/alloc/wasm"
+
+	munwasm "mun/internal/wasm"
+
 	monitoringp "github.com/tendermint/spn/x/monitoringp"
 	monitoringpkeeper "github.com/tendermint/spn/x/monitoringp/keeper"
 	monitoringptypes "github.com/tendermint/spn/x/monitoringp/types"
-
-
-
-
 	// this line is used by starport scaffolding # stargate/app/moduleImport
 )
 
@@ -153,7 +161,7 @@ func GetWasmOpts(appOpts servertypes.AppOptions) []wasm.Option {
 		wasmOpts = append(wasmOpts, wasmkeeper.WithVMCacheMetrics(prometheus.DefaultRegisterer))
 	}
 
-	wasmOpts = append(wasmOpts, wasmkeeper.WithGasRegister(NewJunoWasmGasRegister()))
+	wasmOpts = append(wasmOpts, wasmkeeper.WithGasRegister(NewMunWasmGasRegister()))
 
 	return wasmOpts
 }
@@ -205,21 +213,26 @@ var (
 		monitoringp.AppModuleBasic{},
 		wasm.AppModuleBasic{},
 		munmodule.AppModuleBasic{},
-		
+		claimmodule.AppModuleBasic{},
+		allocmodule.AppModuleBasic{},
 		// this line is used by starport scaffolding # stargate/app/moduleBasic
 	)
 
 	// module account permissions
 	maccPerms = map[string][]string{
-		authtypes.FeeCollectorName:     nil,
-		distrtypes.ModuleName:          nil,
-		minttypes.ModuleName:           {authtypes.Minter},
-		stakingtypes.BondedPoolName:    {authtypes.Burner, authtypes.Staking},
-		stakingtypes.NotBondedPoolName: {authtypes.Burner, authtypes.Staking},
-		govtypes.ModuleName:            {authtypes.Burner},
-		ibctransfertypes.ModuleName:    {authtypes.Minter, authtypes.Burner},
-		wasm.ModuleName:                {authtypes.Burner},
-		munmoduletypes.ModuleName:      {authtypes.Minter, authtypes.Burner, authtypes.Staking},
+		authtypes.FeeCollectorName:        nil,
+		distrtypes.ModuleName:             nil,
+		minttypes.ModuleName:              {authtypes.Minter},
+		stakingtypes.BondedPoolName:       {authtypes.Burner, authtypes.Staking},
+		stakingtypes.NotBondedPoolName:    {authtypes.Burner, authtypes.Staking},
+		govtypes.ModuleName:               {authtypes.Burner},
+		ibctransfertypes.ModuleName:       {authtypes.Minter, authtypes.Burner},
+		wasm.ModuleName:                   {authtypes.Burner},
+		munmoduletypes.ModuleName:         {authtypes.Minter, authtypes.Burner, authtypes.Staking},
+		claimmoduletypes.ModuleName:       {authtypes.Minter, authtypes.Burner, authtypes.Staking},
+		allocmoduletypes.ModuleName:       {authtypes.Minter, authtypes.Burner, authtypes.Staking},
+		allocmoduletypes.FairburnPoolName: nil,
+
 		// this line is used by starport scaffolding # stargate/app/maccPerms
 	}
 )
@@ -284,11 +297,14 @@ type App struct {
 
 	MunKeeper munmodulekeeper.Keeper
 
-	
 	// this line is used by starport scaffolding # stargate/app/keeperDeclaration
 
 	wasmKeeper       wasm.Keeper
 	scopedWasmKeeper capabilitykeeper.ScopedKeeper
+
+	// stargaze modules
+	ClaimKeeper claimmodulekeeper.Keeper
+	AllocKeeper allocmodulekeeper.Keeper
 
 	// mm is the module manager
 	mm *module.Manager
@@ -324,11 +340,10 @@ func New(
 		minttypes.StoreKey, distrtypes.StoreKey, slashingtypes.StoreKey,
 		govtypes.StoreKey, paramstypes.StoreKey, ibchost.StoreKey, upgradetypes.StoreKey, feegrant.StoreKey,
 		evidencetypes.StoreKey, ibctransfertypes.StoreKey, capabilitytypes.StoreKey, monitoringptypes.StoreKey,
-		wasm.StoreKey,
-		munmoduletypes.StoreKey,
-		
+		wasm.StoreKey, munmoduletypes.StoreKey, claimmoduletypes.StoreKey, allocmoduletypes.StoreKey,
 		// this line is used by starport scaffolding # stargate/app/storeKey
 	)
+
 	tkeys := sdk.NewTransientStoreKeys(paramstypes.TStoreKey)
 	memKeys := sdk.NewMemoryStoreKeys(capabilitytypes.MemStoreKey)
 
@@ -391,10 +406,22 @@ func New(
 	app.FeeGrantKeeper = feegrantkeeper.NewKeeper(appCodec, keys[feegrant.StoreKey], app.AccountKeeper)
 	app.UpgradeKeeper = upgradekeeper.NewKeeper(skipUpgradeHeights, keys[upgradetypes.StoreKey], appCodec, homePath, app.BaseApp)
 
+	app.ClaimKeeper = *claimmodulekeeper.NewKeeper(
+		appCodec,
+		keys[claimmoduletypes.StoreKey],
+		keys[claimmoduletypes.MemStoreKey],
+		app.AccountKeeper,
+		app.BankKeeper,
+		&stakingKeeper,
+		app.DistrKeeper,
+		app.GetSubspace(claimmoduletypes.ModuleName),
+	)
+	claimModule := claimmodule.NewAppModule(appCodec, app.ClaimKeeper)
+
 	// register the staking hooks
 	// NOTE: stakingKeeper above is passed by reference, so that it will contain these hooks
 	app.StakingKeeper = *stakingKeeper.SetHooks(
-		stakingtypes.NewMultiStakingHooks(app.DistrKeeper.Hooks(), app.SlashingKeeper.Hooks()),
+		stakingtypes.NewMultiStakingHooks(app.DistrKeeper.Hooks(), app.SlashingKeeper.Hooks(), app.ClaimKeeper.Hooks()),
 	)
 
 	// ... other modules keepers
@@ -440,7 +467,6 @@ func New(
 	)
 	munModule := munmodule.NewAppModule(appCodec, app.MunKeeper, app.AccountKeeper, app.BankKeeper)
 
-
 	// this line is used by starport scaffolding # stargate/app/keeperDefinition
 	wasmDir := filepath.Join(homePath, "data")
 
@@ -449,10 +475,22 @@ func New(
 		panic("error while reading wasm config: " + err.Error())
 	}
 
+	// custom messages
+	registry := munwasm.NewEncoderRegistry()
+	registry.RegisterEncoder(munwasm.DistributionRoute, munwasm.CustomDistributionEncoder)
+	registry.RegisterEncoder(claimmoduletypes.ModuleName, claimwasm.Encoder)
+	registry.RegisterEncoder(allocmoduletypes.ModuleName, allocwasm.Encoder)
+
 	// The last arguments can contain custom message handlers, and custom query handlers,
 	// if we want to allow any custom callbacks
 	supportedFeatures := "iterator,staking,stargate"
 	wasmOpts := GetWasmOpts(appOpts)
+
+	// wasmOpts = append(
+	// 	wasmOpts,
+	// 	wasmkeeper.WithMessageEncoders(munwasm.MessageEncoders(registry)),
+	// 	wasmkeeper.WithQueryPlugins(nil),
+	// )
 
 	app.wasmKeeper = wasm.NewKeeper(
 		appCodec,
@@ -506,10 +544,29 @@ func New(
 	// this line is used by starport scaffolding # ibc/app/router
 	app.IBCKeeper.SetRouter(ibcRouter)
 
-	app.GovKeeper = govkeeper.NewKeeper(
+	govKeeper := govkeeper.NewKeeper(
 		appCodec, keys[govtypes.StoreKey], app.GetSubspace(govtypes.ModuleName), app.AccountKeeper, app.BankKeeper,
 		&stakingKeeper, govRouter,
 	)
+
+	app.GovKeeper = *govKeeper.SetHooks(
+		govtypes.NewMultiGovHooks(
+			app.ClaimKeeper.Hooks(),
+		),
+	)
+
+	app.AllocKeeper = *allocmodulekeeper.NewKeeper(
+		appCodec,
+		keys[allocmoduletypes.StoreKey],
+		keys[allocmoduletypes.MemStoreKey],
+
+		app.AccountKeeper,
+		app.BankKeeper,
+		app.StakingKeeper,
+		app.DistrKeeper,
+		app.GetSubspace(allocmoduletypes.ModuleName),
+	)
+	allocModule := allocmodule.NewAppModule(appCodec, app.AllocKeeper)
 
 	/****  Module Options ****/
 
@@ -543,9 +600,10 @@ func New(
 		params.NewAppModule(app.ParamsKeeper),
 		transferModule,
 		monitoringModule,
-		wasm.NewAppModule(appCodec, &app.wasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
+		claimModule,
+		allocModule,
 		munModule,
-
+		wasm.NewAppModule(appCodec, &app.wasmKeeper, app.StakingKeeper, app.AccountKeeper, app.BankKeeper),
 		// this line is used by starport scaffolding # stargate/app/appModule
 	)
 
@@ -555,6 +613,7 @@ func New(
 	// NOTE: staking module is required if HistoricalEntries param > 0
 	app.mm.SetOrderBeginBlockers(
 		upgradetypes.ModuleName,
+		allocmoduletypes.ModuleName, // must run before distribution begin blocker
 		capabilitytypes.ModuleName,
 		minttypes.ModuleName,
 		distrtypes.ModuleName,
@@ -571,6 +630,7 @@ func New(
 		crisistypes.ModuleName,
 		genutiltypes.ModuleName,
 		feegrant.ModuleName,
+		claimmoduletypes.ModuleName,
 		paramstypes.ModuleName,
 		monitoringptypes.ModuleName,
 		wasm.ModuleName,
@@ -600,7 +660,7 @@ func New(
 		ibctransfertypes.ModuleName,
 		monitoringptypes.ModuleName,
 		munmoduletypes.ModuleName,
-
+		allocmoduletypes.ModuleName, claimmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/endBlockers
 		wasm.ModuleName,
 	)
@@ -630,7 +690,8 @@ func New(
 		feegrant.ModuleName,
 		monitoringptypes.ModuleName,
 		munmoduletypes.ModuleName,
-
+		claimmoduletypes.ModuleName,
+		allocmoduletypes.ModuleName,
 		// this line is used by starport scaffolding # stargate/app/initGenesis
 		wasm.ModuleName,
 	)
@@ -855,6 +916,8 @@ func initParamsKeeper(appCodec codec.BinaryCodec, legacyAmino *codec.LegacyAmino
 	paramsKeeper.Subspace(ibchost.ModuleName)
 	paramsKeeper.Subspace(monitoringptypes.ModuleName)
 	paramsKeeper.Subspace(munmoduletypes.ModuleName)
+	paramsKeeper.Subspace(claimmoduletypes.ModuleName)
+	paramsKeeper.Subspace(allocmoduletypes.ModuleName)
 	// this line is used by starport scaffolding # stargate/app/paramSubspace
 	paramsKeeper.Subspace(wasm.ModuleName)
 

@@ -1,18 +1,24 @@
 import Client from '../../../client/SPClient'
 
 const apiNode =
+  (import.meta.env && import.meta.env.VITE_API_COSMOS &&
+    import.meta.env.VITE_API_COSMOS.replace('0.0.0.0', 'localhost')) ||
   (process.env.VUE_APP_API_COSMOS &&
     process.env.VUE_APP_API_COSMOS.replace('0.0.0.0', 'localhost')) ||
   'http://localhost:1317'
 const rpcNode =
+  (import.meta.env && import.meta.env.VITE_API_TENDERMINT &&
+    import.meta.env.VITE_API_TENDERMINT.replace('0.0.0.0', 'localhost')) ||
   (process.env.VUE_APP_API_TENDERMINT &&
     process.env.VUE_APP_API_TENDERMINT.replace('0.0.0.0', 'localhost')) ||
   'http://localhost:26657'
 const wsNode =
+  (import.meta.env && import.meta.env.VITE_WS_TENDERMINT &&
+    import.meta.env.VITE_WS_TENDERMINT.replace('0.0.0.0', 'localhost')) ||
   (process.env.VUE_APP_WS_TENDERMINT &&
     process.env.VUE_APP_WS_TENDERMINT.replace('0.0.0.0', 'localhost')) ||
   'ws://localhost:26657/websocket'
-const addrPrefix = process.env.VUE_APP_ADDRESS_PREFIX || 'cosmos'
+const addrPrefix = import.meta.env ? import.meta.env.VITE_ADDRESS_PREFIX || 'cosmos' : process.env.VUE_APP_ADDRESS_PREFIX || 'cosmos'
 
 const coinDenom = process.env.VUE_APP_COIN_DENOM || 'STAKE'
 const coinDenomMin = process.env.VUE_APP_COIN_DENOM_MIN || 'stake'
@@ -59,7 +65,25 @@ export default {
     coinDenomMin: (state) => state.coinDenomMin,
     coinDenomMinDecimal: (state) => state.coinDenomMinDecimal,
     tokenAddress: (state) => state.tokenAddress,
+    getEnv: (state) => ({
+      chainID: state.chainId,
+      chainName: state.chainName,
+      apiURL: state.apiNode,
+      rpcURL: state.rpcNode,
+      wsURL: state.wsNode,
+      prefix: state.addrPrefix,
+      status: {
+        apiConnected: state.apiConnected,
+        rpcConnected: state.rpcConnected,
+        wsConnected: state.wsConnected
+      },
+      coinDenom: state.coinDenom,
+      coinDenomMin: state.coinDenomMin,
+      coinDenomMinDecimal: state.coinDenomMinDecimal,
+      tokenAddress: state.tokenAddress,
+    })
   },
+
   mutations: {
     SET_CONFIG(state, config) {
       state.apiNode = config.apiNode
@@ -150,7 +174,7 @@ export default {
     setTxAPI({ commit }, payload) {
       commit('SET_TX_API', payload)
     },
-    setDGMAddress({commit}, payload) {
+    setDGMAddress({ commit }, payload) {
       commit('SET_DGM_ADDRESS', payload.tokenAddress)
     },
     async setConnectivity({ commit }, payload) {
@@ -172,7 +196,7 @@ export default {
       } catch (e) {
         throw new Error(
           'Env:Client:Wallet Could not create signing client with signer: ' +
-            signer
+          signer
         )
       }
     },
@@ -236,7 +260,7 @@ export default {
               localStorage.setItem('tokenAddress', process.env.VUE_APP_DGM_TOKEN)
             }
           }
-          
+
           commit('SET_CONFIG', config)
           await dispatch(
             'cosmos.staking.v1beta1/QueryParams',
@@ -294,7 +318,7 @@ export default {
             } catch (e) {
               throw new Error(
                 'Env:Client:Websocket Could not switch to websocket node:' +
-                  config.wsNode
+                config.wsNode
               )
             }
           }
@@ -307,7 +331,7 @@ export default {
             } catch (e) {
               throw new Error(
                 'Env:Client:TendermintRPC Could not switch to Tendermint RPC node:' +
-                  config.rpcNode
+                config.rpcNode
               )
             }
           }

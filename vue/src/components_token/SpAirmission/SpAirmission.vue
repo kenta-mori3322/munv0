@@ -18,7 +18,7 @@
         </div>
       </div>
       <div>
-        <Button class="Button" @click="() => sendTx(1)">
+        <Button class="Button" @click="() => sendTxInitialClaim()">
           Claim
         </Button>
       </div>
@@ -75,7 +75,7 @@
     <!-- feedbacks -->
     <div v-if="isTxOngoing" class="feedback">
       <div class="loading-spinner">
-        <SpSpinner size="46"></SpSpinner>
+        <SpSpinner :size="46" :margin-left="10"></SpSpinner>
       </div>
       <div style="width: 50%; height: 24px" />
 
@@ -232,8 +232,11 @@ export default defineComponent({
 
     // actions
     let sendMsgSend = (opts: any) =>
-      $s.dispatch('mun.claim/MsgClaim', opts)
+      $s.dispatch('mun.claim.v1beta1/sendMsgInitialClaim', opts)
 
+
+    let sendMsgInitialClaim = (opts: any) =>
+      $s.dispatch('mun.claim.v1beta1/sendMsgInitialClaim', opts)
 
     // methods
     let switchToSend = (): void => {
@@ -252,7 +255,12 @@ export default defineComponent({
 
       state.currentUIState = UI_STATE.SEND
     }
+
     let sendTx = async (x_cond: number): Promise<void> => {
+      if (!address.value) {
+        return
+      }
+
       state.currentUIState = UI_STATE.TX_SIGNING
 
       let send
@@ -274,6 +282,35 @@ export default defineComponent({
         if (txResult.code) {
           throw new Error()
         }
+        state.currentUIState = UI_STATE.TX_SUCCESS
+      } catch (e) {
+        console.error(e)
+        state.currentUIState = UI_STATE.TX_ERROR
+      }
+    }
+
+    let sendTxInitialClaim = async (): Promise<void> => {
+      if (!address.value) {
+        return
+      }
+
+      state.currentUIState = UI_STATE.TX_SIGNING
+
+      try {
+        let payload: any = {
+          sender: address.value,
+        }
+
+        let send = () =>
+          sendMsgInitialClaim({
+            value: payload,
+          })
+        const txResult = await send()
+
+        if (txResult.code) {
+          throw new Error()
+        }
+
         state.currentUIState = UI_STATE.TX_SUCCESS
       } catch (e) {
         console.error(e)
@@ -350,6 +387,7 @@ export default defineComponent({
       parseAmount,
       resetTx,
       sendTx,
+      sendTxInitialClaim,
     }
   }
 })
@@ -467,5 +505,14 @@ $avatar-offset: 32 + 16;
   &:disabled {
     opacity: 0.5;
   }
+}
+
+.feedback {
+  position: absolute;
+  top: 400px;
+  left: 48%;
+  z-index: 9999999999;
+  background: wheat;
+  padding: 10px;
 }
 </style>
