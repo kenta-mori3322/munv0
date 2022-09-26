@@ -23,6 +23,7 @@ type FundCommunityPool struct {
 
 func (fcp FundCommunityPool) Encode(contract sdk.AccAddress) ([]sdk.Msg, error) {
 	amount, err := wasmkeeper.ConvertWasmCoinsToSdkCoins(fcp.Amount)
+
 	if err != nil {
 		return nil, err
 	}

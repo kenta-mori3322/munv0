@@ -485,11 +485,11 @@ func New(
 	supportedFeatures := "iterator,staking,stargate"
 	wasmOpts := GetWasmOpts(appOpts)
 
-	wasmOpts = append(
-		wasmOpts,
-		wasmkeeper.WithMessageEncoders(munwasm.MessageEncoders(registry)),
-		wasmkeeper.WithQueryPlugins(nil),
-	)
+	// wasmOpts = append(
+	// 	wasmOpts,
+	// 	wasmkeeper.WithMessageEncoders(munwasm.MessageEncoders(registry)),
+	// 	wasmkeeper.WithQueryPlugins(nil),
+	// )
 
 	app.wasmKeeper = wasm.NewKeeper(
 		appCodec,

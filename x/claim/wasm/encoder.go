@@ -16,8 +16,7 @@ var _ sgwasm.Encoder = Encoder
 type ClaimAction string
 
 const (
-	ClaimActionMintNFT = "mint_nft"
-	ClaimActionBidNFT  = "bid_nft"
+	ClaimActionSwapToken = "swap_token"
 )
 
 type ClaimFor struct {
@@ -26,14 +25,9 @@ type ClaimFor struct {
 }
 
 func (a ClaimAction) ToAction() (claimtypes.Action, error) {
-	// if a == ClaimActionMintNFT {
-	// 	return claimtypes.ActionMintNFT, nil
-	// }
-
-	// // rebranding the action
-	// if a == ClaimActionBidNFT {
-	// 	return claimtypes.ActionBidNFT, nil
-	// }
+	if a == ClaimActionSwapToken {
+		return claimtypes.ActionSwap, nil
+	}
 
 	return 0, fmt.Errorf("invalid action")
 }
