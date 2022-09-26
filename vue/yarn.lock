@@ -2885,6 +2885,15 @@
   "resolved" "https://registry.npmjs.org/ms/-/ms-2.0.0.tgz"
   "version" "2.0.0"
 
+"mun-client-ts@file:../ts-client":
+  "resolved" "file:../ts-client"
+  "version" "0.0.1"
+  dependencies:
+    "@cosmjs/launchpad" "0.27.0"
+    "@cosmjs/proto-signing" "0.27.0"
+    "@cosmjs/stargate" "0.27.0"
+    "buffer" "^6.0.3"
+
 "nanoid@^3.3.4":
   "integrity" "sha512-MqBkQh/OHTS2egovRtLk45wEyNXwF+cokD+1YPf9u5VfJiRdAiRwB2froX5Co9Rh20xs4siNPm8naNotSD6RBw=="
   "resolved" "https://registry.npmjs.org/nanoid/-/nanoid-3.3.4.tgz"

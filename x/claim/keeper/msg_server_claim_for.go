@@ -22,16 +22,16 @@ func (k msgServer) ClaimFor(goCtx context.Context, msg *types.MsgClaimFor) (*typ
 	if !params.IsAirdropEnabled(ctx.BlockTime()) {
 		return nil, types.ErrAirdropNotEnabled
 	}
-	allowed := false
-	for _, authorization := range params.AllowedClaimers {
-		if authorization.ContractAddress == msg.Sender && authorization.Action == msg.Action {
-			allowed = true
-			break
-		}
-	}
-	if !allowed {
-		return nil, types.ErrUnauthorizedClaimer
-	}
+	// allowed := false
+	// for _, authorization := range params.AllowedClaimers {
+	// 	if authorization.ContractAddress == msg.Sender && authorization.Action == msg.Action {
+	// 		allowed = true
+	// 		break
+	// 	}
+	// }
+	// if !allowed {
+	// 	return nil, types.ErrUnauthorizedClaimer
+	// }
 	coins, err := k.Keeper.ClaimCoinsForAction(ctx, address, msg.GetAction())
 	if err != nil {
 		return nil, err
