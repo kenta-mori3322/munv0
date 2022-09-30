@@ -269,32 +269,32 @@ export default defineComponent({
         return
       }
 
-      state.currentUIState = UI_STATE.TX_SIGNING
+      // state.currentUIState = UI_STATE.TX_SIGNING
 
-      let send
+      // let send
 
-      let payload: any = {
-        airdrop_id: state.tx.airdrop_id,
-        recipient: address.value,
-        conditionType: x_cond
-      }
+      // let payload: any = {
+      //   airdrop_id: state.tx.airdrop_id,
+      //   recipient: address.value,
+      //   conditionType: x_cond
+      // }
 
-      try {
+      // try {
 
-        send = () =>
-          sendMsgSend({
-            value: payload,
-          })
-        const txResult = await send()
+      //   send = () =>
+      //     sendMsgSend({
+      //       value: payload,
+      //     })
+      //   const txResult = await send()
 
-        if (txResult.code) {
-          throw new Error()
-        }
-        state.currentUIState = UI_STATE.TX_SUCCESS
-      } catch (e) {
-        console.error(e)
-        state.currentUIState = UI_STATE.TX_ERROR
-      }
+      //   if (txResult.code) {
+      //     throw new Error()
+      //   }
+      //   state.currentUIState = UI_STATE.TX_SUCCESS
+      // } catch (e) {
+      //   console.error(e)
+      //   state.currentUIState = UI_STATE.TX_ERROR
+      // }
     }
 
     let sendTxInitialClaim = async (): Promise<void> => {
