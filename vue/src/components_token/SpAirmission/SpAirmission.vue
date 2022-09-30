@@ -48,7 +48,7 @@
         </div>
       </div>
       <div>
-        <Button class="Button" @click="() => sendTx(3)">
+        <Button class="Button" @click="() => visitStakingFE()">
           Stake
         </Button>
       </div>
@@ -256,6 +256,10 @@ export default defineComponent({
       state.currentUIState = UI_STATE.SEND
     }
 
+    let visitStakingFE = (): void => {
+      window.open("https://staking.mun.money/")
+    }
+
     let sendTx = async (x_cond: number): Promise<void> => {
       if (!address.value) {
         return
@@ -388,6 +392,7 @@ export default defineComponent({
       resetTx,
       sendTx,
       sendTxInitialClaim,
+      visitStakingFE,
     }
   }
 })
