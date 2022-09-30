@@ -257,6 +257,10 @@ export default defineComponent({
     }
 
     let visitStakingFE = (): void => {
+      if (!address.value) {
+        return
+      }
+
       window.open("https://staking.mun.money/")
     }
 
