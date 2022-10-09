@@ -32865,6 +32865,13 @@ paths:
 
                         signatures required by gogoproto.
                     title: total initial claimable amount for the user
+                  action_ready:
+                    type: array
+                    items:
+                      type: boolean
+                    title: |-
+                      true if action is ready to claim
+                      index of bool in array refers to action enum #
                   action_completed:
                     type: array
                     items:
@@ -32952,9 +32959,9 @@ paths:
           type: string
           enum:
             - ActionInitialClaim
-            - ActionSwap
-            - ActionVote
             - ActionDelegateStake
+            - ActionVote
+            - ActionSwap
       tags:
         - Query
   /mun/claim/v1beta1/module_account_balance:
@@ -33044,9 +33051,9 @@ paths:
                           type: string
                           enum:
                             - ActionInitialClaim
-                            - ActionSwap
-                            - ActionVote
                             - ActionDelegateStake
+                            - ActionVote
+                            - ActionSwap
                           default: ActionInitialClaim
                     title: list of contracts and their allowed claim actions
             description: >-
@@ -55935,9 +55942,9 @@ definitions:
     type: string
     enum:
       - ActionInitialClaim
-      - ActionSwap
-      - ActionVote
       - ActionDelegateStake
+      - ActionVote
+      - ActionSwap
     default: ActionInitialClaim
   mun.claim.v1beta1.ClaimAuthorization:
     type: object
@@ -55948,9 +55955,9 @@ definitions:
         type: string
         enum:
           - ActionInitialClaim
-          - ActionSwap
-          - ActionVote
           - ActionDelegateStake
+          - ActionVote
+          - ActionSwap
         default: ActionInitialClaim
   mun.claim.v1beta1.ClaimRecord:
     type: object
@@ -55973,6 +55980,13 @@ definitions:
             NOTE: The amount field is an Int which implements the custom method
             signatures required by gogoproto.
         title: total initial claimable amount for the user
+      action_ready:
+        type: array
+        items:
+          type: boolean
+        title: |-
+          true if action is ready to claim
+          index of bool in array refers to action enum #
       action_completed:
         type: array
         items:
@@ -56044,9 +56058,9 @@ definitions:
               type: string
               enum:
                 - ActionInitialClaim
-                - ActionSwap
-                - ActionVote
                 - ActionDelegateStake
+                - ActionVote
+                - ActionSwap
               default: ActionInitialClaim
         title: list of contracts and their allowed claim actions
     description: Params defines the claim module's parameters.
@@ -56077,6 +56091,13 @@ definitions:
 
                 signatures required by gogoproto.
             title: total initial claimable amount for the user
+          action_ready:
+            type: array
+            items:
+              type: boolean
+            title: |-
+              true if action is ready to claim
+              index of bool in array refers to action enum #
           action_completed:
             type: array
             items:
@@ -56150,9 +56171,9 @@ definitions:
                   type: string
                   enum:
                     - ActionInitialClaim
-                    - ActionSwap
-                    - ActionVote
                     - ActionDelegateStake
+                    - ActionVote
+                    - ActionSwap
                   default: ActionInitialClaim
             title: list of contracts and their allowed claim actions
     description: QueryParamsResponse is the response type for the Query/Params RPC method.
