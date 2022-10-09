@@ -161,13 +161,13 @@ func (k Keeper) GetClaimableAmountForAction(ctx sdk.Context, addr sdk.AccAddress
 		return sdk.Coins{}, nil
 	}
 
-	// if action is not ready, nothing is claimable
-	if action != types.ActionInitialClaim && !claimRecord.ActionReady[action] {
+	// if previous action not completed, nothing is claimable
+	if action != types.ActionInitialClaim && !claimRecord.ActionCompleted[action-1] {
 		return sdk.Coins{}, nil
 	}
 
-	// if previous action not completed, nothing is claimable
-	if action != types.ActionInitialClaim && !claimRecord.ActionCompleted[action-1] {
+	// if action is not ready, nothing is claimable
+	if action != types.ActionInitialClaim && action != types.ActionSwap && !claimRecord.ActionReady[action] {
 		return sdk.Coins{}, nil
 	}
 
