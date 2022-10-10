@@ -18,23 +18,8 @@
         </div>
       </div>
       <div>
-        <Button class="Button" @click="() => sendTxInitialClaim()">
+        <Button class="Button" @click="() => sendTx(0)">
           Claim
-        </Button>
-      </div>
-    </div>
-    <div className="mission-group  d-flex align-items-right justify-content-between">
-      <div className="col-md-6">
-        <div>
-          <p className="mission-title"> Mission #4 </p>
-        </div>
-        <div>
-          <p className="mission-content">perform a swap (25%)</p>
-        </div>
-      </div>
-      <div>
-        <Button class="Button" @click="() => sendTx(2)">
-          Swap
         </Button>
       </div>
     </div>
@@ -51,6 +36,9 @@
         <Button class="Button" @click="() => visitStakingFE()">
           Stake
         </Button>
+        <Button class="Button" @click="() => sendTx(1)">
+          Claim
+        </Button>
       </div>
     </div>
     <div className="mission-group  d-flex align-items-right justify-content-between">
@@ -63,12 +51,32 @@
         </div>
       </div>
       <div>
-        <Button class="Button" @click="() => sendTx(4)">
+        <Button class="Button" @click="() => visitVotingFE()">
           Vote
+        </Button>
+        <Button class="Button" @click="() => sendTx(2)">
+          Claim
         </Button>
       </div>
     </div>
-
+    <div className="mission-group  d-flex align-items-right justify-content-between">
+      <div className="col-md-6">
+        <div>
+          <p className="mission-title"> Mission #4 </p>
+        </div>
+        <div>
+          <p className="mission-content">perform a swap (25%)</p>
+        </div>
+      </div>
+      <div>
+        <Button class="Button" @click="() => visitSwappingFE()">
+          Swap
+        </Button>
+        <Button class="Button" @click="() => sendTx(3)">
+          Claim
+        </Button>
+      </div>
+    </div>
 
     <div style="width: 50%; height: 50px" />
 
@@ -131,10 +139,6 @@
       <div style="width: 50%; height: 24px" />
 
       <div style="width: 50%">
-        <SpButton style="width: 50%" @click="sendTx">Try again</SpButton>
-
-        <div style="width: 50%; height: 8px" />
-
         <SpButton style="width: 50%" type="secondary" @click="resetTx">Cancel</SpButton>
       </div>
     </div>
@@ -143,12 +147,7 @@
     <div v-else-if="showWalletLocked">
       <div class="wallet-locked-wrapper">unlock your wallet</div>
     </div>
-
-
-
   </div>
-
-
 </template>
 
 <script lang="ts">
@@ -232,11 +231,7 @@ export default defineComponent({
 
     // actions
     let sendMsgSend = (opts: any) =>
-      $s.dispatch('mun.claim.v1beta1/sendMsgInitialClaim', opts)
-
-
-    let sendMsgInitialClaim = (opts: any) =>
-      $s.dispatch('mun.claim.v1beta1/sendMsgInitialClaim', opts)
+      $s.dispatch('mun.claim.v1beta1/sendMsgClaimFor', opts)
 
     // methods
     let switchToSend = (): void => {
@@ -264,40 +259,21 @@ export default defineComponent({
       window.open("https://staking.mun.money/")
     }
 
-    let sendTx = async (x_cond: number): Promise<void> => {
+    let visitVotingFE = (): void => {
       if (!address.value) {
         return
       }
 
-      // state.currentUIState = UI_STATE.TX_SIGNING
-
-      // let send
-
-      // let payload: any = {
-      //   airdrop_id: state.tx.airdrop_id,
-      //   recipient: address.value,
-      //   conditionType: x_cond
-      // }
-
-      // try {
-
-      //   send = () =>
-      //     sendMsgSend({
-      //       value: payload,
-      //     })
-      //   const txResult = await send()
-
-      //   if (txResult.code) {
-      //     throw new Error()
-      //   }
-      //   state.currentUIState = UI_STATE.TX_SUCCESS
-      // } catch (e) {
-      //   console.error(e)
-      //   state.currentUIState = UI_STATE.TX_ERROR
-      // }
     }
 
-    let sendTxInitialClaim = async (): Promise<void> => {
+    let visitSwappingFE = (): void => {
+      if (!address.value) {
+        return
+      }
+
+    }
+
+    let sendTx = async (action: number): Promise<void> => {
       if (!address.value) {
         return
       }
@@ -307,10 +283,11 @@ export default defineComponent({
       try {
         let payload: any = {
           sender: address.value,
+          action: action
         }
 
         let send = () =>
-          sendMsgInitialClaim({
+        sendMsgSend({
             value: payload,
           })
         const txResult = await send()
@@ -325,7 +302,6 @@ export default defineComponent({
         state.currentUIState = UI_STATE.TX_ERROR
       }
     }
-
     // computed
     let showSend = computed<boolean>(() => {
       return state.currentUIState === UI_STATE.SEND
@@ -395,8 +371,9 @@ export default defineComponent({
       parseAmount,
       resetTx,
       sendTx,
-      sendTxInitialClaim,
       visitStakingFE,
+      visitVotingFE,
+      visitSwappingFE,
     }
   }
 })
