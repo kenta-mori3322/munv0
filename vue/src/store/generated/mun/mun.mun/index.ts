@@ -1,10 +1,12 @@
 import { txClient, queryClient, MissingWalletError , registry} from './module'
 
 import { Params } from "./module/types/mun/params"
+import { QueryGetVersionRequest } from "./module/types/mun/query"
+import { QueryGetVersionResponse } from "./module/types/mun/query"
 import { Version } from "./module/types/mun/version"
 
 
-export { Params, Version };
+export { Params, QueryGetVersionRequest, QueryGetVersionResponse, Version };
 
 async function initTxClient(vuexGetters) {
 	return await txClient(vuexGetters['common/wallet/signer'], {
@@ -43,11 +45,12 @@ function getStructure(template) {
 const getDefaultState = () => {
 	return {
 				Params: {},
-				Version: {},
 				VersionAll: {},
 				
 				_Structure: {
 						Params: getStructure(Params.fromPartial({})),
+						QueryGetVersionRequest: getStructure(QueryGetVersionRequest.fromPartial({})),
+						QueryGetVersionResponse: getStructure(QueryGetVersionResponse.fromPartial({})),
 						Version: getStructure(Version.fromPartial({})),
 						
 		},
@@ -82,12 +85,6 @@ export default {
 						(<any> params).query=null
 					}
 			return state.Params[JSON.stringify(params)] ?? {}
-		},
-				getVersion: (state) => (params = { params: {}}) => {
-					if (!(<any> params).query) {
-						(<any> params).query=null
-					}
-			return state.Version[JSON.stringify(params)] ?? {}
 		},
 				getVersionAll: (state) => (params = { params: {}}) => {
 					if (!(<any> params).query) {
@@ -146,28 +143,6 @@ export default {
 				return getters['getParams']( { params: {...key}, query}) ?? {}
 			} catch (e) {
 				throw new Error('QueryClient:QueryParams API Node Unavailable. Could not perform query: ' + e.message)
-				
-			}
-		},
-		
-		
-		
-		
-		 		
-		
-		
-		async QueryVersion({ commit, rootGetters, getters }, { options: { subscribe, all} = { subscribe:false, all:false}, params, query=null }) {
-			try {
-				const key = params ?? {};
-				const queryClient=await initQueryClient(rootGetters)
-				let value= (await queryClient.queryVersion( key.index)).data
-				
-					
-				commit('QUERY', { query: 'Version', key: { params: {...key}, query}, value })
-				if (subscribe) commit('SUBSCRIBE', { action: 'QueryVersion', payload: { options: { all }, params: {...key},query }})
-				return getters['getVersion']( { params: {...key}, query}) ?? {}
-			} catch (e) {
-				throw new Error('QueryClient:QueryVersion API Node Unavailable. Could not perform query: ' + e.message)
 				
 			}
 		},

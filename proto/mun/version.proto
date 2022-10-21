@@ -5,6 +5,6 @@ option go_package = "mun/x/mun/types";
 
 message Version {
   string index = 1; 
-  
+  string version = 2;
 }
 

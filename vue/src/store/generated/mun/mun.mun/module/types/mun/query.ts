@@ -426,8 +426,6 @@ export const QueryAllVersionResponse = {
 export interface Query {
   /** Parameters queries the parameters of the module. */
   Params(request: QueryParamsRequest): Promise<QueryParamsResponse>;
-  /** Queries a Version by index. */
-  Version(request: QueryGetVersionRequest): Promise<QueryGetVersionResponse>;
   /** Queries a list of Version items. */
   VersionAll(request: QueryAllVersionRequest): Promise<QueryAllVersionResponse>;
 }
@@ -441,14 +439,6 @@ export class QueryClientImpl implements Query {
     const data = QueryParamsRequest.encode(request).finish();
     const promise = this.rpc.request("mun.mun.Query", "Params", data);
     return promise.then((data) => QueryParamsResponse.decode(new Reader(data)));
-  }
-
-  Version(request: QueryGetVersionRequest): Promise<QueryGetVersionResponse> {
-    const data = QueryGetVersionRequest.encode(request).finish();
-    const promise = this.rpc.request("mun.mun.Query", "Version", data);
-    return promise.then((data) =>
-      QueryGetVersionResponse.decode(new Reader(data))
-    );
   }
 
   VersionAll(

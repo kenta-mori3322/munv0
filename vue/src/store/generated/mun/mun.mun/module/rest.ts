@@ -29,10 +29,6 @@ export interface MunQueryAllVersionResponse {
   pagination?: V1Beta1PageResponse;
 }
 
-export interface MunQueryGetVersionResponse {
-  version?: MunVersion;
-}
-
 /**
  * QueryParamsResponse is response type for the Query/Params RPC method.
  */
@@ -43,6 +39,7 @@ export interface MunQueryParamsResponse {
 
 export interface MunVersion {
   index?: string;
+  version?: string;
 }
 
 export interface ProtobufAny {
@@ -353,22 +350,6 @@ export class Api<SecurityDataType extends unknown> extends HttpClient<SecurityDa
       path: `/mun/mun/version`,
       method: "GET",
       query: query,
-      format: "json",
-      ...params,
-    });
-
-  /**
-   * No description
-   *
-   * @tags Query
-   * @name QueryVersion
-   * @summary Queries a Version by index.
-   * @request GET:/mun/mun/version/{index}
-   */
-  queryVersion = (index: string, params: RequestParams = {}) =>
-    this.request<MunQueryGetVersionResponse, RpcStatus>({
-      path: `/mun/mun/version/${index}`,
-      method: "GET",
       format: "json",
       ...params,
     });

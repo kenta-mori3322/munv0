@@ -16,10 +16,6 @@ service Query {
   rpc Params(QueryParamsRequest) returns (QueryParamsResponse) {
     option (google.api.http).get = "/mun/mun/params";
   }
-  // Queries a Version by index.
-	rpc Version(QueryGetVersionRequest) returns (QueryGetVersionResponse) {
-		option (google.api.http).get = "/mun/mun/version/{index}";
-	}
 
 	// Queries a list of Version items.
 	rpc VersionAll(QueryAllVersionRequest) returns (QueryAllVersionResponse) {

@@ -7,8 +7,6 @@ import (
 	"github.com/spf13/cobra"
 
 	"github.com/cosmos/cosmos-sdk/client"
-	// "github.com/cosmos/cosmos-sdk/client/flags"
-	// sdk "github.com/cosmos/cosmos-sdk/types"
 
 	"mun/x/mun/types"
 )
@@ -26,7 +24,6 @@ func GetQueryCmd(queryRoute string) *cobra.Command {
 
 	cmd.AddCommand(CmdQueryParams())
 	cmd.AddCommand(CmdListVersion())
-	cmd.AddCommand(CmdShowVersion())
 	// this line is used by starport scaffolding # 1
 
 	return cmd
