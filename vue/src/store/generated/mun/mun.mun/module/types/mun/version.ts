@@ -5,14 +5,18 @@ export const protobufPackage = "mun.mun";
 
 export interface Version {
   index: string;
+  version: string;
 }
 
-const baseVersion: object = { index: "" };
+const baseVersion: object = { index: "", version: "" };
 
 export const Version = {
   encode(message: Version, writer: Writer = Writer.create()): Writer {
     if (message.index !== "") {
       writer.uint32(10).string(message.index);
+    }
+    if (message.version !== "") {
+      writer.uint32(18).string(message.version);
     }
     return writer;
   },
@@ -26,6 +30,9 @@ export const Version = {
       switch (tag >>> 3) {
         case 1:
           message.index = reader.string();
+          break;
+        case 2:
+          message.version = reader.string();
           break;
         default:
           reader.skipType(tag & 7);
@@ -42,12 +49,18 @@ export const Version = {
     } else {
       message.index = "";
     }
+    if (object.version !== undefined && object.version !== null) {
+      message.version = String(object.version);
+    } else {
+      message.version = "";
+    }
     return message;
   },
 
   toJSON(message: Version): unknown {
     const obj: any = {};
     message.index !== undefined && (obj.index = message.index);
+    message.version !== undefined && (obj.version = message.version);
     return obj;
   },
 
@@ -57,6 +70,11 @@ export const Version = {
       message.index = object.index;
     } else {
       message.index = "";
+    }
+    if (object.version !== undefined && object.version !== null) {
+      message.version = object.version;
+    } else {
+      message.version = "";
     }
     return message;
   },

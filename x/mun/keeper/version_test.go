@@ -4,12 +4,13 @@ import (
 	"strconv"
 	"testing"
 
-	sdk "github.com/cosmos/cosmos-sdk/types"
-	"github.com/stretchr/testify/require"
 	keepertest "mun/testutil/keeper"
 	"mun/testutil/nullify"
 	"mun/x/mun/keeper"
 	"mun/x/mun/types"
+
+	sdk "github.com/cosmos/cosmos-sdk/types"
+	"github.com/stretchr/testify/require"
 )
 
 // Prevent strconv unused error
@@ -51,13 +52,4 @@ func TestVersionRemove(t *testing.T) {
 		)
 		require.False(t, found)
 	}
-}
-
-func TestVersionGetAll(t *testing.T) {
-	keeper, ctx := keepertest.MunKeeper(t)
-	items := createNVersion(keeper, ctx, 10)
-	require.ElementsMatch(t,
-		nullify.Fill(items),
-		nullify.Fill(keeper.GetAllVersion(ctx)),
-	)
 }

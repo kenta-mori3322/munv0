@@ -33264,6 +33264,8 @@ paths:
                   properties:
                     index:
                       type: string
+                    version:
+                      type: string
               pagination:
                 type: object
                 properties:
@@ -33356,16 +33358,6 @@ paths:
           in: query
           required: false
           type: boolean
-        - name: pagination.reverse
-          description: >-
-            reverse is set to true if results are to be returned in the
-            descending order.
-
-
-            Since: cosmos-sdk 0.43
-          in: query
-          required: false
-          type: boolean
       tags:
         - Query
   '/mun/mun/version/{index}':
@@ -33382,6 +33374,8 @@ paths:
                 type: object
                 properties:
                   index:
+                    type: string
+                  version:
                     type: string
         default:
           description: An unexpected error response.
@@ -33569,6 +33563,16 @@ paths:
           in: query
           required: false
           type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
       tags:
         - Query
   '/tendermint/spn/claim/claim_record/{address}':
@@ -33729,6 +33733,16 @@ paths:
             when key
 
             is set.
+          in: query
+          required: false
+          type: boolean
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
           in: query
           required: false
           type: boolean
@@ -56530,6 +56544,8 @@ definitions:
           properties:
             index:
               type: string
+            version:
+              type: string
       pagination:
         type: object
         properties:
@@ -56563,6 +56579,8 @@ definitions:
         properties:
           index:
             type: string
+          version:
+            type: string
   mun.mun.QueryParamsResponse:
     type: object
     properties:
@@ -56574,6 +56592,8 @@ definitions:
     type: object
     properties:
       index:
+        type: string
+      version:
         type: string
   tendermint.spn.claim.ClaimRecord:
     type: object

@@ -3,12 +3,14 @@ package keeper
 import (
 	"context"
 
+	"mun/x/mun/types"
+
 	"github.com/cosmos/cosmos-sdk/store/prefix"
 	sdk "github.com/cosmos/cosmos-sdk/types"
 	"github.com/cosmos/cosmos-sdk/types/query"
+	"github.com/cosmos/cosmos-sdk/version"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"mun/x/mun/types"
 )
 
 func (k Keeper) VersionAll(c context.Context, req *types.QueryAllVersionRequest) (*types.QueryAllVersionResponse, error) {
@@ -35,6 +37,13 @@ func (k Keeper) VersionAll(c context.Context, req *types.QueryAllVersionRequest)
 	if err != nil {
 		return nil, status.Error(codes.Internal, err.Error())
 	}
+
+	version := types.Version{
+		Index:   "1",
+		Version: version.Version,
+	}
+
+	versions = append(versions, version)
 
 	return &types.QueryAllVersionResponse{Version: versions, Pagination: pageRes}, nil
 }
