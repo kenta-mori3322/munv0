@@ -33358,48 +33358,16 @@ paths:
           in: query
           required: false
           type: boolean
-      tags:
-        - Query
-  '/mun/mun/version/{index}':
-    get:
-      summary: Queries a Version by index.
-      operationId: MunMunVersion
-      responses:
-        '200':
-          description: A successful response.
-          schema:
-            type: object
-            properties:
-              version:
-                type: object
-                properties:
-                  index:
-                    type: string
-                  version:
-                    type: string
-        default:
-          description: An unexpected error response.
-          schema:
-            type: object
-            properties:
-              code:
-                type: integer
-                format: int32
-              message:
-                type: string
-              details:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    '@type':
-                      type: string
-                  additionalProperties: {}
-      parameters:
-        - name: index
-          in: path
-          required: true
-          type: string
+        - name: pagination.reverse
+          description: >-
+            reverse is set to true if results are to be returned in the
+            descending order.
+
+
+            Since: cosmos-sdk 0.43
+          in: query
+          required: false
+          type: boolean
       tags:
         - Query
   /tendermint/spn/claim/airdrop_supply:
@@ -56571,16 +56539,6 @@ definitions:
                    repeated Bar results = 1;
                    PageResponse page = 2;
            }
-  mun.mun.QueryGetVersionResponse:
-    type: object
-    properties:
-      version:
-        type: object
-        properties:
-          index:
-            type: string
-          version:
-            type: string
   mun.mun.QueryParamsResponse:
     type: object
     properties:
